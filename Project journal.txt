@@ -1,0 +1,39 @@
+Project Journal (don´t forget timestamps!!!)
+
+1. Initial ideas about project structure before and during coding
+19/01/2026 - setup project on github and create prepare.sh for directory setup and input download
+20/01/2026 - planning to use a modular structure with a main runnal-file and a seperate library for helper functions etc.
+20/01/2026 - decided to use panda libray to create dataframes for easier data manipulation
+20/01/2026 - get species id from names (species dataframe) and look for orthologous groups in the last column of members dataframe (inclusion/exclusion)
+
+2. Design decisions and why you made them, including approaches you tried that didn't work out
+
+
+
+3. Testing and bugs encountered (with exact error messages and line numbers), and how you solved them
+
+--Bug 1--
+Date: 20/01/2026
+Error message: ValueError: Index orthologous_group_id invalid
+Description: While creating dataframes from input files, i tried to set a specific column as index using df.set_index('column_name'), but encountered a KeyError.
+Solution: The column names were defined after setting the index, so i rearranged the code to first set the column names and then set the index.
+
+
+
+4. Approximate time spent on each part
+
+
+
+
+
+
+Import Data contains:
+Annotations: orthologous group id, functional group, function description
+Members: orthologous group id, num of proteins in that group, num of species containing that group, list of protein ids, list of species ids containing that group
+Taxid info: spedies id, species name, lineage info
+Eggnog functional categories: functional category id, functional category description
+
+
+
+Next step:
+get name from id for nice output in 1_A.txt
