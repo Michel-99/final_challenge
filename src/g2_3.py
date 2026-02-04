@@ -65,8 +65,7 @@ def run_analysis():
     }
 
     def get_og_set(target_taxid):
-        # We look for the exact ID inside our new 'clean_taxid_set'
-        # This is much faster and more accurate than string matching
+     #use mask instead string matching --> https://stackoverflow.com/questions/32280556/how-to-filter-a-dataframe-column-of-lists-for-those-that-contain-a-certain-item
         mask = df_members["clean_taxid_set"].apply(lambda s: target_taxid in s)
         return set(df_members.loc[mask, "orthologous_group"])
 
