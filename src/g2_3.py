@@ -16,7 +16,7 @@ def run_analysis():
     # Load members data
     df_members = eggnog.dataframe_setup_members()
 
-    # Standardize 6 columns --> issue with indexing fixed
+    # Standardize 6 columns (handles the index issue)
     df_members = df_members.reset_index()
     df_members.columns = [
         "taxid_level",
@@ -27,8 +27,8 @@ def run_analysis():
         "species_taxid_containing_protein",
     ]
 
-    # Needed: Ensure TaxID column is treated as a list of strings, not a single string
-    # why? This prevents counting characters instead of species
+    # IMPORTANT: Ensure TaxID column is treated as a list of strings, not a single string
+    # This prevents counting characters instead of species
     df_members["taxid_list"] = (
         df_members["species_taxid_containing_protein"]
         .astype(str)
@@ -70,7 +70,7 @@ def run_analysis():
     lost_only_rat = (core_set & mouse) - rat
 
     # Save Results
-    with open("results/question_6_detailed_results.txt", "w") as f:
+    with open("results/question_2_detailed_results.txt", "w") as f:
         f.write("Evolutionary Analysis: Primates, Chicken, Fish vs Rodents\n")
         f.write("=" * 60 + "\n")
         f.write(f"Conserved in Primates+Chicken+Fish: {len(core_set)}\n")
@@ -81,7 +81,7 @@ def run_analysis():
 
     # Question 3
 
-    print("Identifying universal animal genes (Bonus)...")
+    print("Identifying universal animal genes (q3)...")
 
     # Count total unique species mentioned in the entire file
     all_species = set()
@@ -96,9 +96,9 @@ def run_analysis():
     df_members["actual_sp_count"] = df_members["taxid_list"].apply(len)
     universal_ogs = df_members[df_members["actual_sp_count"] >= threshold]
 
-    # Save Bonus Results
+    # Save q3
     universal_ogs[["orthologous_group", "actual_sp_count"]].to_csv(
-        "results/bonus_universal_ogs.tsv", sep="\t", index=False
+        "results/q3_universal_ogs.tsv", sep="\t", index=False
     )
 
     print(f"Analysis complete! Universal OGs found: {len(universal_ogs)}")
