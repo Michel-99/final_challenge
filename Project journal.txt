@@ -5,6 +5,12 @@ Project Journal (don´t forget timestamps!!!)
 20/01/2026 - planning to use a modular structure with a main runnal-file and a seperate library for helper functions etc.
 20/01/2026 - decided to use panda libray to create dataframes for easier data manipulation
 20/01/2026 - get species id from names (species dataframe) and look for orthologous groups in the last column of members dataframe (inclusion/exclusion)
+?Part michel missing?
+29/01/2026 - create function to get species name through species id input
+29/01/2026 - CATCH UP - implement type hints and doctests for eggnog library functions; improve docstrings
+06/02/2026 - work on getting functional categories from identified genes
+07/02/2026 - count occurence of functional categories, add matching category description and output sorted by number of occurences to .csv table
+
 
 2. Design decisions and why you made them, including approaches you tried that didn't work out
 
@@ -18,7 +24,9 @@ Error message: ValueError: Index orthologous_group_id invalid
 Description: While creating dataframes from input files, i tried to set a specific column as index using df.set_index('column_name'), but encountered a KeyError.
 Solution: The column names were defined after setting the index, so i rearranged the code to first set the column names and then set the index.
 
-
+-- Bug 2--
+Date: 29/01/2026
+Using columns as index removes them from the dataframe
 
 4. Approximate time spent on each part
 
@@ -32,8 +40,3 @@ Annotations: orthologous group id, functional group, function description
 Members: orthologous group id, num of proteins in that group, num of species containing that group, list of protein ids, list of species ids containing that group
 Taxid info: spedies id, species name, lineage info
 Eggnog functional categories: functional category id, functional category description
-
-
-
-Next step:
-get name from id for nice output in 1_A.txt
