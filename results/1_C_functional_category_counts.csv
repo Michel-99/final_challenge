@@ -1,0 +1,24 @@
+category_code,count,description
+S,534,Function unknown
+K,162,Transcription
+T,131,Signal transduction mechanisms
+O,52,"Posttranslational modification, protein turnover, chaperones"
+Z,24,Cytoskeleton
+A,21,RNA processing and modification
+J,21,"Translation, ribosomal structure and biogenesis"
+U,20,"Intracellular trafficking, secretion, and vesicular transport"
+I,16,Lipid transport and metabolism
+D,16,"Cell cycle control, cell division, chromosome partitioning"
+P,16,Inorganic ion transport and metabolism
+C,16,Energy production and conversion
+W,16,Extracellular structures
+B,11,Chromatin structure and dynamics
+L,10,"Replication, recombination and repair"
+Q,8,"Secondary metabolites biosynthesis, transport and catabolism"
+G,8,Carbohydrate transport and metabolism
+E,7,Amino acid transport and metabolism
+M,7,Cell wall/membrane/envelope biogenesis
+V,7,Defense mechanisms
+F,3,Nucleotide transport and metabolism
+N,3,Cell motility
+H,2,Coenzyme transport and metabolism
