@@ -66,12 +66,9 @@ functional_categories_in_homologs = df_annotations[
 print("Counting occurrences of each functional category ...")
 
 category_counts_df = (
-    functional_categories_in_homologs.apply(list)
-    .explode()
-    .value_counts()
-    .reset_index(name="count")
-    .rename(columns={"index": "category_code"})
+    functional_categories_in_homologs.apply(list).explode().value_counts().reset_index()
 )
+category_counts_df.columns = ["category_code", "count"]
 
 category_counts_df = category_counts_df.merge(
     df_functional_categories_description, on="category_code", how="left"
@@ -80,3 +77,45 @@ category_counts_df = category_counts_df.merge(
 print("Exporting result table to results/1_C_functional_category_counts.csv ...")
 
 category_counts_df.to_csv("results/1_C_functional_category_counts.csv", index=False)
+
+
+###---------------------------------------
+### 1) D) ortholog genes found only in humans and chimp.
+
+
+unique_orth_genes = homologs_df.loc[
+    df_members["num_of_species"] == 2,
+    ["orthologous_group_id", "species_taxid_containing_protein"],
+]
+print(f"{len(unique_orth_genes)} ortholog genes are only found in human and chimps")
+
+
+###---------------------------------------
+### 1 E) ortholog genes found only in humans and chimp.
+primates = {
+    "Homo sapiens",
+    "Tarsius syrichta",
+    "Callithrix jacchus",
+    "Macaca fascicularis",
+    "Papio anubis",
+    "Gorilla gorilla",
+    "Pan paniscus",
+    "Pan troglodytes",
+    "Pongo abelii",
+    "Saimiri boliviensis",
+    "Chlorocebus sabaeus",
+    "Rhinopithecus roxellana",
+    "Nomascus leucogenys",
+    "Otolemur garnettii",
+    "Macaca mulatta",
+}
+
+primate_ids = []
+for species in primates:
+    species_id = eggnog.get_species_id_by_name(species, df_species)
+    primate_ids.append(species_id)
+
+homologs_filtered = eggnog.filter_allowed_ids(
+    homologs_df, "species_taxid_containing_protein", primate_ids
+)
+print(f"{len(homologs_filtered)} ortholog genes are only found in primates.")

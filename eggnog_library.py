@@ -1,7 +1,7 @@
 """Library for working with eggNOG files (eggNOG v5.0)"""
 
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Set
 import pandas as pd
 import re
 import csv
@@ -167,7 +167,10 @@ def get_species_name_by_id(species_id: int, df: pd.DataFrame) -> str:
 
 
 def filter_by_ids(
-    df: pd.DataFrame, column: str, include_ids: List[str], exclude_ids: List[str]
+    df: pd.DataFrame,
+    column: str,
+    include_ids: List[str],
+    exclude_ids: Optional[List[str]] = None,
 ) -> pd.DataFrame:
     """
     Filters a dataframe based on presence or absence of specific IDs
@@ -177,7 +180,7 @@ def filter_by_ids(
         df (pd.DataFrame): The input dataframe.
         column (str): The column name containing comma-separated IDs.
         include_ids (List[str]): List of IDs that MUST be present.
-        exclude_ids (List[str]): List of IDs that MUST NOT be present.
+        exclude_ids (Optional[List[str]]): List of IDs that MUST NOT be present. Defaults to None.
 
     Returns:
         pd.DataFrame: The filtered dataframe.
@@ -196,6 +199,9 @@ def filter_by_ids(
         0   1  A,B
         1   2  B,C
     """
+    if exclude_ids is None:
+        exclude_ids = []
+
     # Start with a mask where everything is True
     mask = pd.Series(True, index=df.index)
 
@@ -257,6 +263,43 @@ def write_protein_id(file_path: str, output_path: str) -> None:
         unique = extract_protein_id(file_path)
         for id in unique:
             file.write(f"{id}\n")
+
+
+def filter_allowed_ids(
+    df: pd.DataFrame, column: str, allowed_ids: Set[str]
+) -> pd.DataFrame:
+    """
+    Filter a DataFrame to include only rows where all IDs in a column are in the allowed set.
+    This function splits the values in the specified column by common delimiters (commas and/or whitespace),
+    then checks if all resulting IDs are present in the allowed_ids set. Only rows where all IDs are allowed
+    are retained in the returned DataFrame.
+    Args:
+        df (pd.DataFrame): The input DataFrame to filter.
+        column (str): The name of the column containing IDs to check. Values can be single IDs or
+                      multiple IDs separated by commas and/or whitespace.
+        allowed_ids (List[str]): A list of IDs that are considered allowed. Non-string IDs will be
+                                 converted to strings for comparison.
+    Returns:
+        pd.DataFrame: A filtered DataFrame containing only rows where all IDs in the specified column
+                      are present in the allowed_ids set. The original DataFrame is not modified.
+    Example:
+        >>> df = pd.DataFrame({'ids': ['1,2,3', '4,5', '2,3']})
+        >>> allowed = ['1', '2', '3', '4', '5']
+        >>> filter_allowed_ids(df, 'ids', allowed)
+           ids
+        0  1,2,3
+        1  4,5
+        2  2,3
+    """
+    allowed_set = set(str(id) for id in allowed_ids)
+
+    mask = (
+        df[column]
+        .astype(str)
+        .str.split(r"[,\s]+")
+        .apply(lambda ids: set(ids) <= allowed_set)  # subset or equal
+    )
+    return df[mask]
 
 
 # --END FUNCTIONS--
