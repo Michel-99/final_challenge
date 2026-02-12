@@ -120,17 +120,14 @@ homologs_filtered = eggnog.filter_allowed_ids(
 )
 print(f"{len(homologs_filtered)} ortholog genes are only found in primates.")
 
-###======================================================================
-### QUESTION 2: Lineage Analysis - Primates, Chicken, Fish vs Rodents
-###======================================================================
 
+### QUESTION 2: Lineage Analysis - Primates, Chicken, Fish vs Rodents
 print("\n" + "=" * 80)
 print("QUESTION 2: LINEAGE ANALYSIS")
 print("Orthologs in Primates + Chicken + Fish, checking losses in Rodents")
 print("=" * 80)
 
 print("\nCleaning TaxIDs (removing protein suffixes)...")
-
 
 def clean_taxid_string(raw_string):
     """
@@ -141,8 +138,6 @@ def clean_taxid_string(raw_string):
     items = s.split(",")
     clean_set = {int(item.split(".")[0].strip()) for item in items}
     return clean_set
-
-
 # Apply the cleaning function
 df_members["clean_taxid_set"] = df_members["species_taxid_containing_protein"].apply(
     clean_taxid_string
@@ -160,7 +155,6 @@ IDS = {
     "mouse": 10090,
     "rat": 10116,
 }
-
 
 def get_og_set(target_taxid):
     # use mask instead string matching
@@ -223,14 +217,7 @@ with open(output_file_q2, "w") as f:
 
 print(f"\n✅ Q2 Results saved to {output_file_q2}")
 
-###======================================================================
 ### QUESTION 3: Universal Genes (99% or more of all animal species)
-###======================================================================
-
-print("\n" + "=" * 80)
-print("QUESTION 3: UNIVERSAL ANIMAL GENES")
-print("OGs present in 99% or more of all animal species")
-print("=" * 80)
 
 print("\nIdentifying universal animal genes...")
 
