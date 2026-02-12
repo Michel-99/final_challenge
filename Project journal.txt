@@ -44,7 +44,7 @@ Date: 29/01/2026
 Using columns as index removes them from the dataframe
 
 ---Bug 3 ---
-Date: 07.02.2026 & 12.02.2026
+Date: 07.02.2026 & 10.02.2026
 Error: The result file either showed only one or nothing
 Description: The results were only showing: 
 Analysis:
