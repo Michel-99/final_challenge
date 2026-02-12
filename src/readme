@@ -1,0 +1,161 @@
+# README - Questions 2 & 3
+
+Analysis script for gene conservation patterns in vertebrates (Question 2) and finding universal animal genes (Question 3).
+
+## What this does
+
+**Question 2:** Looks at genes that are conserved across primates, chicken, and fish, then checks which ones got lost in rodents (mouse and/or rat)
+
+**Question 3:** Finds genes that are present in almost all animal species (99% threshold)
+
+## Files
+
+```
+question_2_3_analysis.py    # the main script
+results/
+  ├── question_2_detailed_results.txt
+  └── q3_universal_ogs.tsv
+```
+
+## How to run
+
+```bash
+python question_2_3_analysis.py
+```
+
+Make sure you're in the correct directory first
+
+## What I had to fix
+
+The main issue was that the eggnog_library returns dataframes where the orthologous group IDs can be either in the index OR as a column, depending on how the data is structured. 
+I had to add checks to handle both cases. I had trouble figuring this out on my own  with the IDS ect. so I used Copilot on github for debugging help. 
+Debug sections done with Copilot were as following:
+
+print("\n=== DEBUG: Checking each species ===")
+for key, taxid in IDS.items():
+    og_set = get_og_set(taxid)
+    print(f"{key:12} ({taxid}): {len(og_set):6} OGs")
+    if len(og_set) == 0:
+        print(f"  ⚠️  NO OGs FOUND! Checking raw data...")
+        # Check if taxid appears anywhere
+        found_anywhere = df_members["clean_taxid_set"].apply(lambda s: taxid in s).any()
+        print(f"     Found {taxid} anywhere in data: {found_anywhere}")
+        # Show sample clean_taxid_set
+        print(f"     Sample clean_taxid_set values:")
+        for sample in df_members["clean_taxid_set"].head(5):
+            print(f"       {sample}")
+
+  #and then this: Check if our IDs actually exist in the data
+    print("\n=== CHECKING IF IDs EXIST IN DATA ===")
+    all_taxids_in_data = set()
+    for taxid_set in df_members["clean_taxid_set"]:
+        all_taxids_in_data.update(taxid_set)
+
+    print(f"Total unique TaxIDs in data: {len(all_taxids_in_data)}")
+    print(f"Sample TaxIDs from data: {sorted(list(all_taxids_in_data))[:20]}")
+
+    print("\nLooking for our target IDs in the data:")
+    for key, taxid in IDS.items():
+        found = taxid in all_taxids_in_data
+        print(f"  {key:12} ({taxid}): {'✅ FOUND' if found else '❌ NOT FOUND'}")
+
+    print("\nDo we have human (9606):", 9606 in all_taxids_in_data)
+    print("Do we have chimp (9598):", 9598 in all_taxids_in_data)
+    print("Do we have mouse (10090):", 10090 in all_taxids_in_data)
+
+####this allowed to go fix the issues, fixes are below:
+
+    # Retrieve sets
+    primates = get_og_set(IDS["human"]) | get_og_set(IDS["chimp"])
+    chicken = get_og_set(IDS["chicken"])
+    fish = get_og_set(IDS["danio"]) | get_og_set(IDS["takifugu"])
+    mouse = get_og_set(IDS["mouse"])
+    rat = get_og_set(IDS["rat"])
+
+
+def run_analysis():
+    print(f"Running from: {os.getcwd()}")
+    print("Loading data into DataFrames...")
+
+    # Load members data using your custom library
+    df_members = eggnog.dataframe_setup_members()
+
+    # Print first to see actual structure
+    print("\nDEBUG: df_members structure BEFORE reset_index:")
+    print(df_members.head())
+    print(f"Columns: {df_members.columns.tolist()}")
+    print(f"Index name: {df_members.index.name}")
+
+    # Check what your library actually returns
+    # DO NOT reset_index() unless you understand what it does!
+
+
+
+### Fix 1: Handling the OG column
+Instead of just assuming the column name, I check both places:
+```python
+og_col = df_members.index.name if df_members.index.name is not None else 'orthologous_group'
+if og_col not in df_members.columns:
+    og_col = df_members.index.name
+```
+
+### Fix 2: Finding the species taxid column
+The column name for species taxids wasn't always the same, so I made it search for it:
+```python
+for col in df_members.columns:
+    if 'taxid' in col.lower() and 'species' in col.lower():
+        species_col = col
+        break
+```
+
+### Fix 3: Converting taxids to integers
+The raw data has taxids like "9606.ENSP12345" but I only need the 9606 part. Made a function to clean them up and convert to integer sets:
+```python
+def clean_taxid_string(raw_string):
+    s = str(raw_string)
+    items = s.split(",")
+    clean_set = {int(item.split(".")[0].strip()) for item in items}
+    return clean_set
+```
+
+## The logic
+
+### Question 2
+1. Get all OGs present in humans OR chimps (primates)
+2. Get OGs in chicken
+3. Get OGs in zebrafish OR fugu (fish)
+4. Core set = genes in ALL three groups (primates AND chicken AND fish)
+5. Then check which core genes are missing in mouse/rat
+
+The set operations:
+- Lost in both: `core_set - (mouse | rat)`
+- Lost only in mouse: `(core_set & rat) - mouse`
+- Lost only in rat: `(core_set & mouse) - rat`
+
+### Question 3
+Count how many species each OG appears in, then filter for OGs that appear in ≥99% of all species in the dataset.
+
+## Species taxids used
+
+```python
+human: 9606
+chimp: 9598
+chicken: 9031
+danio (zebrafish): 7955
+takifugu (fugu): 31033
+mouse: 10090
+rat: 10116
+```
+
+## Outputs
+
+`question_2_detailed_results.txt` has:
+- How many genes are in the core vertebrate set
+- How many were lost in both rodents
+- How many were lost only in mouse
+- How many were lost only in rat
+- List of example OGs that were lost
+
+`q3_universal_ogs.tsv` is a table with:
+- Orthologous group ID
+- How many species it appears in
