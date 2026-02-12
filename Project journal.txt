@@ -1,4 +1,4 @@
-Project Journal (don´t forget timestamps!!!)
+Project Journal (don´t forget timestamps!!!) 
 
 1. Initial ideas about project structure before and during coding
 19/01/2026 - setup project on github and create prepare.sh for directory setup and input download
