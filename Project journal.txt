@@ -1,37 +1,44 @@
 Project Journal (don´t forget timestamps!!!)
 
-1. Initial ideas about project structure before and during coding
-19/01/2026 - setup project on github and create prepare.sh for directory setup and input download
+
+19/01/2026 - setup project on github and create prepare.sh for directory setup and input download,
+    !LLM-usage: learn github with gemini canvas
+
 20/01/2026 - planning to use a modular structure with a main runnal-file and a seperate library for helper functions etc.
+
 20/01/2026 - decided to use panda libray to create dataframes for easier data manipulation
+    !LLM-usage: discussed pros and cons of using pandas vs read/write csv 
+        results:
+        Advantages of pandas: easy manipulation of dataframes
+        disatvantages: RAM-usage as pandas loads entire dataset into RAM --> in our case the datasets are not too big
+
 20/01/2026 - get species id from names (species dataframe) and look for orthologous groups in the last column of members dataframe (inclusion/exclusion)
+    --Bug 1--
+    Date: 20/01/2026
+    Error message: ValueError: Index orthologous_group_id invalid
+    Description: While creating dataframes from input files, i tried to set a specific column as index using df.set_index('column_name'), but encountered a KeyError.
+    Solution: The column names were defined after setting the index, so i rearranged the code to first set the column names and then set the index.
+
 ?Part michel missing?
+
 29/01/2026 - create function to get species name through species id input
+
 29/01/2026 - CATCH UP - implement type hints and doctests for eggnog library functions; improve docstrings
+    -- Bug 2--
+    Date: 29/01/2026
+    Using columns as index removes them from the dataframe
+
 06/02/2026 - work on getting functional categories from identified genes
+
 07/02/2026 - count occurence of functional categories, add matching category description and output sorted by number of occurences to .csv table
 
 
+
+
+1. Initial ideas about project structure before and during coding
 2. Design decisions and why you made them, including approaches you tried that didn't work out
-
-
-
 3. Testing and bugs encountered (with exact error messages and line numbers), and how you solved them
-
---Bug 1--
-Date: 20/01/2026
-Error message: ValueError: Index orthologous_group_id invalid
-Description: While creating dataframes from input files, i tried to set a specific column as index using df.set_index('column_name'), but encountered a KeyError.
-Solution: The column names were defined after setting the index, so i rearranged the code to first set the column names and then set the index.
-
--- Bug 2--
-Date: 29/01/2026
-Using columns as index removes them from the dataframe
-
 4. Approximate time spent on each part
-
-
-
 
 
 
