@@ -1,46 +1,20 @@
-import os
-import sys
-import pandas as pd
-
-# Setup path
-sys.path.append("/home/clara/Lectures/final_challenge")
-os.chdir("/home/clara/Lectures/final_challenge")
-
 import eggnog_library as eggnog
 import csv
 
-# Create results directory if it doesn't exist
-if not os.path.exists("results"):
-    os.makedirs("results")
-if not os.path.exists("temp"):
-    os.makedirs("temp")
-
-print("=" * 80)
-print("METAZOAN GENE CONSERVATION AND LOSS ANALYSIS")
-print("Questions 1A-1E, Question 2, and Question 3")
-print("=" * 80)
-
 # Dataframe setup
-print("\nSetting up dataframes ...")
+print("Setting up dataframes ...")
 df_annotations = eggnog.dataframe_setup_annotations()
 df_members = eggnog.dataframe_setup_members()
 df_species = eggnog.dataframe_setup_taxid_info()
 df_functional_categories_description = eggnog.dataframe_setup_functional_categories()
 
 ###----------------------------------------------------------------------
-### QUESTION 1: A) homologuous genes in humans and chimp but not mouse
-###----------------------------------------------------------------------
-
-print("\n" + "=" * 80)
-print("QUESTION 1A: Homologous genes in Human & Chimp but NOT in Mouse")
-print("=" * 80)
+### 1) A) homologuous genes in humans and chimp but not mouse
 
 # get species ids
 human_id = eggnog.get_species_id_by_name("Homo sapiens", df_species)
 chimp_id = eggnog.get_species_id_by_name("Pan troglodytes", df_species)
 mouse_id = eggnog.get_species_id_by_name("Mus musculus", df_species)
-
-print(f"Human ID: {human_id}, Chimp ID: {chimp_id}, Mouse ID: {mouse_id}")
 
 # set which species should be included and excluded
 include = [human_id, chimp_id]
@@ -53,24 +27,17 @@ homologs_df = eggnog.filter_by_ids(
 )
 
 # output to .txt file
-print(f"Writing number of homologs to results/1_A_homologs.txt ...")
+print("Writing number of homologs to 1_A_homologs.txt file in /results ...")
 with open("results/1_A_homologs.txt", "w") as f:
     f.write(
         f'We identified {len(homologs_df)} homologous genes shared by "{", ".join([eggnog.get_species_name_by_id(n, df_species) for n in include])}" that have diverged or are absent in "{", ".join([eggnog.get_species_name_by_id(n, df_species) for n in exclude])}"'
     )
 
-print(f"✅ Found {len(homologs_df)} homologous OGs")
-
 # create temporary .csv of homologs for further use
 homologs_df.reset_index().to_csv("temp/1_A_homologs_.tsv", sep="\t", index=False)
 
 ###----------------------------------------------------------------------
-### QUESTION 1: B) extract unique protein IDs from homologs file
-###----------------------------------------------------------------------
-
-print("\n" + "=" * 80)
-print("QUESTION 1B: Unique protein IDs")
-print("=" * 80)
+### 1) B) extract unique protein IDs from homologs file and
 
 print("Extracting unique protein IDs from homologs ...")
 
@@ -79,20 +46,13 @@ unique_protein_ids = (
     homologs_df["protein_id"].str.split(",").explode().str.strip().unique()
 )
 
-print(f"Writing unique protein IDs to results/1_B_unique_protein_IDs.txt ...")
+print("Writing unique protein IDs to 1_B_unique_protein_IDs.txt file in /results ...")
 
 with open("results/1_B_unique_protein_IDs.txt", "w") as f:
     f.write("\n".join(unique_protein_ids))
 
-print(f"✅ Found {len(unique_protein_ids)} unique protein IDs")
-
 ###---------------------------------------
-### QUESTION 1: C) functional categories of homologous genes
-###---------------------------------------
-
-print("\n" + "=" * 80)
-print("QUESTION 1C: Functional categories")
-print("=" * 80)
+### 1) C) functional categories of homologous genes
 
 # get functional categories for homologous genes by merging with annotations dataframe on orthologous group id
 print("Extracting functional categories for homologous genes ...")
@@ -114,37 +74,24 @@ category_counts_df = category_counts_df.merge(
     df_functional_categories_description, on="category_code", how="left"
 )
 
-print(f"Exporting result table to results/1_C_functional_category_counts.csv ...")
+print("Exporting result table to results/1_C_functional_category_counts.csv ...")
 
 category_counts_df.to_csv("results/1_C_functional_category_counts.csv", index=False)
 
-print(f"✅ Found {len(category_counts_df)} functional categories")
-print("\nTop 10 functional categories:")
-for idx, row in category_counts_df.head(10).iterrows():
-    print(f"  {row['category_code']}: {row['count']} genes")
 
 ###---------------------------------------
-### QUESTION 1: D) ortholog genes found only in humans and chimp
-###---------------------------------------
+### 1) D) ortholog genes found only in humans and chimp.
 
-print("\n" + "=" * 80)
-print("QUESTION 1D: Genes found ONLY in Human and Chimp")
-print("=" * 80)
 
-# ✅ CRITICAL BUG FIX: Use homologs_df instead of df_members
-unique_orth_genes = homologs_df[homologs_df["num_of_species"] == 2]
+unique_orth_genes = homologs_df.loc[
+    df_members["num_of_species"] == 2,
+    ["orthologous_group_id", "species_taxid_containing_protein"],
+]
+print(f"{len(unique_orth_genes)} ortholog genes are only found in human and chimps")
 
-num_unique_q1d = len(unique_orth_genes)
-print(f"✅ Found {num_unique_q1d} ortholog genes found only in human and chimps")
 
 ###---------------------------------------
-### QUESTION 1: E) ortholog genes found only in primates
-###---------------------------------------
-
-print("\n" + "=" * 80)
-print("QUESTION 1E: Primate-specific genes")
-print("=" * 80)
-
+### 1 E) ortholog genes found only in humans and chimp.
 primates = {
     "Homo sapiens",
     "Tarsius syrichta",
@@ -171,9 +118,7 @@ for species in primates:
 homologs_filtered = eggnog.filter_allowed_ids(
     homologs_df, "species_taxid_containing_protein", primate_ids
 )
-
-num_primate_specific = len(homologs_filtered)
-print(f"✅ Found {num_primate_specific} ortholog genes found only in primates")
+print(f"{len(homologs_filtered)} ortholog genes are only found in primates.")
 
 ###======================================================================
 ### QUESTION 2: Lineage Analysis - Primates, Chicken, Fish vs Rodents
