@@ -28,6 +28,19 @@ Solution: The column names were defined after setting the index, so i rearranged
 Date: 29/01/2026
 Using columns as index removes them from the dataframe
 
+---Bug 3 ---
+Date: 07.02.2026 & 12.02.2026
+Error: The result file either showed only one or nothing
+Description: The results were only showing: Analysis:
+Primates, Chicken, Fish vs Rodents
+============================================================
+Conserved in Primates+Chicken+Fish: 1
+Lost in both Mouse and Rat: 0
+Lost ONLY in Mouse: 0
+Lost ONLY in Rat: 0
+Solution:  Debugging section, the column name was checked, the finding of the species taxid column was adapted and the taxids were converted into integers.
+
+
 4. Approximate time spent on each part
 
 
