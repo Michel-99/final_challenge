@@ -8,13 +8,28 @@ Project Journal (don´t forget timestamps!!!)
 ?Part michel missing?
 29/01/2026 - create function to get species name through species id input
 29/01/2026 - CATCH UP - implement type hints and doctests for eggnog library functions; improve docstrings
+04/02/2026 - start work on Question 2: lineage-specific gene loss analysis
+04/02/2026 - initial idea: count how many species each orthologous group appears in
+11/02/2026 - decided to calculate total species count dynamically from data instead of hardcoding
 06/02/2026 - work on getting functional categories from identified genes
 07/02/2026 - count occurence of functional categories, add matching category description and output sorted by number of occurences to .csv table
+10/02/2026 - debugging code for q2 & q3
+12/02/2026 - create comprehensive summary file (COMPLETE_SUMMARY.txt) combining all Q1-Q3 results
+12/02/2026 - add error handling for column name variations (orthologous_group_id vs index)
+12/02/2026 - ensure all result files are properly saved to results/ directory
 
 
 2. Design decisions and why you made them, including approaches you tried that didn't work out
 
+20/01/2026 decided to use pandas library for the following reasons:
+- efficient handling of large-scale eggNOG datasets (10,000+ OGs, 300+ species)
+- boolean masking simplifies complex multi-species filtering operations
+- vectorized operations (apply, map) are faster than manual loops
+- natural fit for tabular biological data (OG annotations, species membership)
+- built-in CSV/TSV export for result reporting
+- better code readability compared to nested loops and dictionaries
 
+using set --> faster than list, O(1) vs O(n), it also allows one-liner insteasd of more loops, getting rid of dubplications
 
 3. Testing and bugs encountered (with exact error messages and line numbers), and how you solved them
 
@@ -31,7 +46,8 @@ Using columns as index removes them from the dataframe
 ---Bug 3 ---
 Date: 07.02.2026 & 12.02.2026
 Error: The result file either showed only one or nothing
-Description: The results were only showing: Analysis:
+Description: The results were only showing: 
+Analysis:
 Primates, Chicken, Fish vs Rodents
 ============================================================
 Conserved in Primates+Chicken+Fish: 1
