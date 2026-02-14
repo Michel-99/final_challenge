@@ -1,19 +1,30 @@
 """Library for working with eggNOG files (eggNOG v5.0)"""
 
 from pathlib import Path
+from typing import List, Optional, Set
 import pandas as pd
 import re
+import csv
 
 # --FUNCTIONS--
 
 
 # -- Dataframe setup functions--
-def dataframe_setup_annotations():
-    """Set up the Dataframe for annotations. The orthologous_group_id is set as index."""
+def dataframe_setup_annotations() -> pd.DataFrame:
+    """
+    Set up the Dataframe for annotations. The orthologous_group_id is set as index.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing annotation data with columns:
+                      - evolutionary_level
+                      - orthologous_group_id (index)
+                      - functional category
+                      - functional_description
+    """
     column_names = [
         "evolutionary_level",
         "orthologous_group_id",
-        "functional category",
+        "functional_category",
         "functional_description",
     ]
     df = pd.read_csv(
@@ -21,14 +32,25 @@ def dataframe_setup_annotations():
         sep="\t",
         header=None,
         names=column_names,
-        index_col="orthologous_group_id",
+        # index_col="orthologous_group_id",
     )
 
     return df
 
 
-def dataframe_setup_members():
-    """Set up the Dataframe for annotations. The orthologous_group_id is set as index."""
+def dataframe_setup_members() -> pd.DataFrame:
+    """
+    Set up the Dataframe for members. The orthologous_group_id is set as index.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing member data with columns:
+                      - evolutionary_level
+                      - orthologous_group_id (index)
+                      - num_of_proteins
+                      - num_of_species
+                      - protein_id
+                      - species_taxid_containing_protein
+    """
     column_names = [
         "evolutionary_level",
         "orthologous_group_id",
@@ -42,14 +64,24 @@ def dataframe_setup_members():
         sep="\t",
         header=None,
         names=column_names,
-        index_col="orthologous_group_id",
+        # index_col="orthologous_group_id",
     )
 
     return df
 
 
-def dataframe_setup_taxid_info():
-    """Set up the Dataframe for tax (species) id info. The species id is set as index."""
+def dataframe_setup_taxid_info() -> pd.DataFrame:
+    """
+    Set up the Dataframe for tax (species) id info.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing taxonomy info with columns:
+                      - species_taxid
+                      - species_name
+                      - rank
+                      - named_lineage
+                      - tax_id_lineage
+    """
     column_names = [
         "species_taxid",
         "species_name",
@@ -61,7 +93,15 @@ def dataframe_setup_taxid_info():
     return df
 
 
-def dataframe_setup_functional_categories():
+def dataframe_setup_functional_categories() -> pd.DataFrame:
+    """
+    Set up the Dataframe for functional categories by parsing a text file.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing functional categories with columns:
+                      - Category_code
+                      - Description
+    """
     data = []
 
     with open("data/eggnog4.functional_categories.txt", "r") as f:
@@ -77,22 +117,91 @@ def dataframe_setup_functional_categories():
                 description = match.group(2)
                 data.append([letter, description])
 
-    df = pd.DataFrame(data, columns=["Category_Letter", "Description"])
+    df = pd.DataFrame(data, columns=["category_code", "description"])
     return df
 
 
 # Functions using dataframes
-def get_species_id_by_name(species_name, df):
-    """Get the species id by species name from the species dataframe."""
+def get_species_id_by_name(species_name: str, df: pd.DataFrame) -> int:
+    """
+    Get the species id by species name from the species dataframe.
+
+    Args:
+        species_name (str): The name of the species.
+        df (pd.DataFrame): The dataframe containing species information.
+
+    Returns:
+        int: The species taxid.
+
+    Examples:
+        >>> import pandas as pd
+        >>> data = {'species_name': ['E. coli', 'H. sapiens'], 'species_taxid': [562, 9606]}
+        >>> df = pd.DataFrame(data)
+        >>> get_species_id_by_name('E. coli', df)
+        562
+    """
     species_id = df.loc[df["species_name"] == species_name, "species_taxid"].item()
     return species_id
 
 
-def filter_by_ids(df, column, include_ids, exclude_ids):
+def get_species_name_by_id(species_id: int, df: pd.DataFrame) -> str:
+    """
+    Get the species name by species id from the species dataframe.
+
+    Args:
+        species_id (int): The species taxid.
+        df (pd.DataFrame): The dataframe containing species information.
+
+    Returns:
+        str: The name of the species.
+
+    Examples:
+        >>> import pandas as pd
+        >>> data = {'species_name': ['E. coli', 'H. sapiens'], 'species_taxid': [562, 9606]}
+        >>> df = pd.DataFrame(data)
+        >>> get_species_name_by_id(9606, df)
+        'H. sapiens'
+    """
+    species_name = df.loc[df["species_taxid"] == species_id, "species_name"].item()
+    return species_name
+
+
+def filter_by_ids(
+    df: pd.DataFrame,
+    column: str,
+    include_ids: List[str],
+    exclude_ids: Optional[List[str]] = None,
+) -> pd.DataFrame:
     """
     Filters a dataframe based on presence or absence of specific IDs
     within a comma-separated string column.
+
+    Args:
+        df (pd.DataFrame): The input dataframe.
+        column (str): The column name containing comma-separated IDs.
+        include_ids (List[str]): List of IDs that MUST be present.
+        exclude_ids (Optional[List[str]]): List of IDs that MUST NOT be present. Defaults to None.
+
+    Returns:
+        pd.DataFrame: The filtered dataframe.
+
+    Examples:
+        >>> import pandas as pd
+        >>> data = {'id': [1, 2, 3], 'tags': ['A,B', 'B,C', 'A,C']}
+        >>> df = pd.DataFrame(data)
+        >>> # Include 'A', Exclude 'B' -> Should match row 3 ('A,C')
+        >>> filter_by_ids(df, 'tags', ['A'], ['B'])
+           id tags
+        2   3  A,C
+        >>> # Include 'B' -> Should match row 1 and 2
+        >>> filter_by_ids(df, 'tags', ['B'], [])
+           id tags
+        0   1  A,B
+        1   2  B,C
     """
+    if exclude_ids is None:
+        exclude_ids = []
+
     # Start with a mask where everything is True
     mask = pd.Series(True, index=df.index)
 
@@ -108,3 +217,89 @@ def filter_by_ids(df, column, include_ids, exclude_ids):
         mask &= ~df[column].str.contains(regex_pattern, na=False)
 
     return df[mask]
+
+
+# anpassen um pandas zu nutzen?
+
+
+def extract_protein_id(file_path: str) -> set:
+    """
+    Extract unique protein IDs from a tab-separated values (TSV) file.
+    Reads a TSV file, skips the header row, and extracts protein IDs from the
+    4th column (index 3). Handles comma-separated protein IDs within each cell.
+    Args:
+        file_path (str): The path to the TSV file to read.
+    Returns:
+        set: A set of unique protein IDs found in the file.
+    Example:
+        >>> protein_ids = extract_protein_id("data.tsv")
+        >>> print(protein_ids)
+        {'PROT001', 'PROT002', 'PROT003'}
+    """
+
+    unique_protein_ids = set()
+    with open(file_path, "r") as f:
+        rd = csv.reader(f, delimiter="\t")
+        next(rd)  # Skip header row
+        for line in rd:
+            protein_ids = line[3].split(",")
+            for protein_id in protein_ids:
+                unique_protein_ids.add(protein_id)
+    return unique_protein_ids
+
+
+def write_protein_id(file_path: str, output_path: str) -> None:
+    """
+    Write unique protein IDs to a file, one per line.
+
+    Args:
+        output_path (str): The file path where protein IDs will be written.
+
+    Returns:
+        None
+    """
+
+    with open(output_path, "w") as file:
+        unique = extract_protein_id(file_path)
+        for id in unique:
+            file.write(f"{id}\n")
+
+
+def filter_allowed_ids(
+    df: pd.DataFrame, column: str, allowed_ids: Set[str]
+) -> pd.DataFrame:
+    """
+    Filter a DataFrame to include only rows where all IDs in a column are in the allowed set.
+    This function splits the values in the specified column by common delimiters (commas and/or whitespace),
+    then checks if all resulting IDs are present in the allowed_ids set. Only rows where all IDs are allowed
+    are retained in the returned DataFrame.
+    Args:
+        df (pd.DataFrame): The input DataFrame to filter.
+        column (str): The name of the column containing IDs to check. Values can be single IDs or
+                      multiple IDs separated by commas and/or whitespace.
+        allowed_ids (List[str]): A list of IDs that are considered allowed. Non-string IDs will be
+                                 converted to strings for comparison.
+    Returns:
+        pd.DataFrame: A filtered DataFrame containing only rows where all IDs in the specified column
+                      are present in the allowed_ids set. The original DataFrame is not modified.
+    Example:
+        >>> df = pd.DataFrame({'ids': ['1,2,3', '4,5', '2,3']})
+        >>> allowed = ['1', '2', '3', '4', '5']
+        >>> filter_allowed_ids(df, 'ids', allowed)
+           ids
+        0  1,2,3
+        1  4,5
+        2  2,3
+    """
+    allowed_set = set(str(id) for id in allowed_ids)
+
+    mask = (
+        df[column]
+        .astype(str)
+        .str.split(r"[,\s]+")
+        .apply(lambda ids: set(ids) <= allowed_set)  # subset or equal
+    )
+    return df[mask]
+
+
+# --END FUNCTIONS--

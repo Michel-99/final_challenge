@@ -1,14 +1,56 @@
-Project Journal (don´t forget timestamps!!!)
+Project Journal (don´t forget timestamps!!!) 
 
 1. Initial ideas about project structure before and during coding
 19/01/2026 - setup project on github and create prepare.sh for directory setup and input download
 20/01/2026 - planning to use a modular structure with a main runnal-file and a seperate library for helper functions etc.
 20/01/2026 - decided to use panda libray to create dataframes for easier data manipulation
 20/01/2026 - get species id from names (species dataframe) and look for orthologous groups in the last column of members dataframe (inclusion/exclusion)
+?Part michel missing?
+29/01/2026 - create function to get species name through species id input
+29/01/2026 - CATCH UP - implement type hints and doctests for eggnog library functions; improve docstrings
+04/02/2026 - start work on Question 2: lineage-specific gene loss analysis
+04/02/2026 - initial idea: count how many species each orthologous group appears in
+11/02/2026 - decided to calculate total species count dynamically from data instead of hardcoding
+06/02/2026 - work on getting functional categories from identified genes
+07/02/2026 - count occurence of functional categories, add matching category description and output sorted by number of occurences to .csv table
+10/02/2026 - debugging code for q2 & q3
+12/02/2026 - create comprehensive summary file (COMPLETE_SUMMARY.txt) combining all Q1-Q3 results
+12/02/2026 - add error handling for column name variations (orthologous_group_id vs index)
+12/02/2026 - ensure all result files are properly saved to results/ directory
+14/02/2026 - final adaptions
 
 2. Design decisions and why you made them, including approaches you tried that didn't work out
 
+20/01/2026 decided to use pandas library for the following reasons:
+- efficient handling of large-scale eggNOG datasets (10,000+ OGs, 300+ species)
+- boolean masking simplifies complex multi-species filtering operations
+- vectorized operations (apply, map) are faster than manual loops
+- natural fit for tabular biological data (OG annotations, species membership)
+- built-in CSV/TSV export for result reporting
+- better code readability compared to nested loops and dictionaries
 
+using set --> faster than list, O(1) vs O(n), it also allows one-liner insteasd of more loops, getting rid of dubplications
+The decision was based on a collection of what we had learned in the course and links that we found after researching the topic and discussed in the group.
+We also used Copilot on Github to obtain additional feedback on our ideas/choices. 
+The websites used to gather information are listed below, although the order of the links does not correspond to the order in which they were used.
+ 
+https://biopython.org/docs/latest/Tutorial/index.html
+https://stackoverflow.com/questions/11707586/how-do-i-expand-the-output-display-to-see-more-columns-of-a-pandas-dataframe
+https://stackoverflow.com/questions/642154/how-do-i-convert-all-strings-in-a-list-of-lists-to-integers
+https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
+https://www.geeksforgeeks.org/python/different-types-of-joins-in-pandas/
+https://stackoverflow.com/questions/19960077/how-to-filter-pandas-dataframe-using-in-and-not-in-like-in-sql
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html
+https://stackoverflow.com/questions/34962104/how-can-i-use-the-apply-function-for-a-single-column
+https://www.geeksforgeeks.org/python/python-set-operations-union-intersection-difference-symmetric-difference/
+https://docs.python.org/3/tutorial/datastructures.html#sets
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.explode.html
+https://pandas.pydata.org/docs/reference/api/pandas.Series.str.split.html
+https://stackoverflow.com/questions/26147180/convert-row-to-column-header-for-pandas-dataframe
+https://stackoverflow.com/questions/20490274/how-to-reset-index-in-a-pandas-dataframe
+https://www.w3schools.com/python/pandas/default.asp
+https://realpython.com/pandas-dataframe/
+https://pandas.pydata.org/docs/user_guide/dsintro.html#dataframe
 
 3. Testing and bugs encountered (with exact error messages and line numbers), and how you solved them
 
@@ -18,13 +60,135 @@ Error message: ValueError: Index orthologous_group_id invalid
 Description: While creating dataframes from input files, i tried to set a specific column as index using df.set_index('column_name'), but encountered a KeyError.
 Solution: The column names were defined after setting the index, so i rearranged the code to first set the column names and then set the index.
 
+-- Bug 2--
+Date: 29/01/2026
+Using columns as index removes them from the dataframe
 
+---Bug 3 ---
+Date: 07.02.2026 & 10.02.2026
+Error: The result file either showed only one or nothing
+Description: The results were only showing: 
+Analysis:
+Primates, Chicken, Fish vs Rodents
+============================================================
+Conserved in Primates+Chicken+Fish: 1
+Lost in both Mouse and Rat: 0
+Lost ONLY in Mouse: 0
+Lost ONLY in Rat: 0
+Solution:  Debugging section, the column name was checked, the finding of the species taxid column was adapted and the taxids were converted into integers.
+
+Solution as mentioned with Copilot on Github for this bug:
+## What I had to fix
+The main issue was that the eggnog_library returns dataframes where the orthologous group IDs can be either in the index OR as a column, depending on how the data is structured. 
+I had to add checks to handle both cases. I had trouble figuring this out on my own  with the IDS ect. so I used Copilot on github for debugging help. 
+Debug sections done with Copilot were as following:
+
+print("\n=== DEBUG: Checking each species ===")
+for key, taxid in IDS.items():
+    og_set = get_og_set(taxid)
+    print(f"{key:12} ({taxid}): {len(og_set):6} OGs")
+    if len(og_set) == 0:
+        print(f"  ⚠️  NO OGs FOUND! Checking raw data...")
+        # Check if taxid appears anywhere
+        found_anywhere = df_members["clean_taxid_set"].apply(lambda s: taxid in s).any()
+        print(f"     Found {taxid} anywhere in data: {found_anywhere}")
+        # Show sample clean_taxid_set
+        print(f"     Sample clean_taxid_set values:")
+        for sample in df_members["clean_taxid_set"].head(5):
+            print(f"       {sample}")
+
+  #and then this: Check if our IDs actually exist in the data
+    print("\n=== CHECKING IF IDs EXIST IN DATA ===")
+    all_taxids_in_data = set()
+    for taxid_set in df_members["clean_taxid_set"]:
+        all_taxids_in_data.update(taxid_set)
+
+    print(f"Total unique TaxIDs in data: {len(all_taxids_in_data)}")
+    print(f"Sample TaxIDs from data: {sorted(list(all_taxids_in_data))[:20]}")
+
+    print("\nLooking for our target IDs in the data:")
+    for key, taxid in IDS.items():
+        found = taxid in all_taxids_in_data
+        print(f"  {key:12} ({taxid}): {'✅ FOUND' if found else '❌ NOT FOUND'}")
+
+    print("\nDo we have human (9606):", 9606 in all_taxids_in_data)
+    print("Do we have chimp (9598):", 9598 in all_taxids_in_data)
+    print("Do we have mouse (10090):", 10090 in all_taxids_in_data)
+
+####this allowed to go fix the issues, fixes are below:
+
+    # Retrieve sets
+    primates = get_og_set(IDS["human"]) | get_og_set(IDS["chimp"])
+    chicken = get_og_set(IDS["chicken"])
+    fish = get_og_set(IDS["danio"]) | get_og_set(IDS["takifugu"])
+    mouse = get_og_set(IDS["mouse"])
+    rat = get_og_set(IDS["rat"])
+
+
+def run_analysis():
+    print(f"Running from: {os.getcwd()}")
+    print("Loading data into DataFrames...")
+
+    # Load members data using your custom library
+    df_members = eggnog.dataframe_setup_members()
+
+    # Print first to see actual structure
+    print("\nDEBUG: df_members structure BEFORE reset_index:")
+    print(df_members.head())
+    print(f"Columns: {df_members.columns.tolist()}")
+    print(f"Index name: {df_members.index.name}")
+
+    # Check what your library actually returns
+    # DO NOT reset_index() unless you understand what it does!
+
+
+### Fix 1: Handling the OG column
+Instead of just assuming the column name, I check both places:
+```python
+og_col = df_members.index.name if df_members.index.name is not None else 'orthologous_group'
+if og_col not in df_members.columns:
+    og_col = df_members.index.name
+```
+
+### Fix 2: Finding the species taxid column
+The column name for species taxids wasn't always the same, so I made it search for it:
+```python
+for col in df_members.columns:
+    if 'taxid' in col.lower() and 'species' in col.lower():
+        species_col = col
+        break
+```
+
+### Fix 3: Converting taxids to integers
+The raw data has taxids like "9606.ENSP12345" but I only need the 9606 part. Made a function to clean them up and convert to integer sets:
+```python
+def clean_taxid_string(raw_string):
+    s = str(raw_string)
+    items = s.split(",")
+    clean_set = {int(item.split(".")[0].strip()) for item in items}
+    return clean_set
+
+---Bug 4 ---
+14/02/2026
+Running the whole code to ensure everything is working: 
+runall.py", line 249
+    universal_ogs[[og_col, "actual_sp_count"]].to_csv(
+IndentationError: unexpected indent
+Bug fixed, it was just a typo.
 
 4. Approximate time spent on each part
 
+The time below includes total time of: first ideas, disussion within the group, coding, bug fixing and again disucssion of the results within the group (and potentially going back to the code to fix something).
 
+1a: 4hrs
+1b: 2hrs
+1c: 1hr
+1d: 2hrs
+1e: 1hr
+2: 4hrs
+3: 2hrs
 
-
+Additional files like ReadMe, Journal ect.: 3-4 hrs
 
 
 Import Data contains:
@@ -33,7 +197,5 @@ Members: orthologous group id, num of proteins in that group, num of species con
 Taxid info: spedies id, species name, lineage info
 Eggnog functional categories: functional category id, functional category description
 
-
-
-Next step:
-get name from id for nice output in 1_A.txt
+All of the individuals mentioned contributed equally to the project, and the codes and ideas were regularly discussed in team meetings:
+Josef Birnöcker, Clara Pernold, Michel Zwicker
