@@ -68,3 +68,38 @@ rat: 10116
 `q3_universal_ogs.tsv` is a table with:
 - Orthologous group ID
 - How many species it appears in
+
+Results:
+
+================================================================================
+QUESTION 2: LINEAGE ANALYSIS
+Orthologs in Primates + Chicken + Fish, checking losses in Rodents
+================================================================================
+
+Cleaning TaxIDs (removing protein suffixes)...
+Analyzing lineage conservation and loss...
+
+=== SET SIZES ===
+Primates OGs: 15478
+Chicken OGs: 11494
+Fish OGs: 14786
+Mouse OGs: 14541
+Rat OGs: 14407
+
+Core vertebrate OGs (in Primates + Chicken + Fish): 9861
+Lost in BOTH Mouse and Rat: 108
+Lost ONLY in Mouse: 63
+Lost ONLY in Rat: 138
+
+✅ Q2 Results saved to results/2_detailed_results.txt
+
+================================================================================
+QUESTION 3: UNIVERSAL ANIMAL GENES
+OGs present in 99% or more of all animal species
+================================================================================
+
+Identifying universal animal genes...
+Total unique species found in file: 161
+Threshold for universal (99%): 159.39
+✅ Found 694 universal OGs (99%+ species)
+✅ Q3 Results saved to results/3_universal_ogs.tsv
