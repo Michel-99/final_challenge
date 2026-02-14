@@ -30,7 +30,9 @@ Project Journal (don´t forget timestamps!!!)
 - better code readability compared to nested loops and dictionaries
 
 using set --> faster than list, O(1) vs O(n), it also allows one-liner insteasd of more loops, getting rid of dubplications
-The decision was based on a collection of what we had learned in the course and links that we found after researching the topic and discussed in the group. We also used Copilot on Github to obtain additional feedback on our ideas/choices. The websites used to gather information are listed below, although the order of the links does not correspond to the order in which they were used.
+The decision was based on a collection of what we had learned in the course and links that we found after researching the topic and discussed in the group.
+We also used Copilot on Github to obtain additional feedback on our ideas/choices. 
+The websites used to gather information are listed below, although the order of the links does not correspond to the order in which they were used.
  
 https://biopython.org/docs/latest/Tutorial/index.html
 https://stackoverflow.com/questions/11707586/how-do-i-expand-the-output-display-to-see-more-columns-of-a-pandas-dataframe
