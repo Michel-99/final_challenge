@@ -17,7 +17,7 @@ Project Journal (don´t forget timestamps!!!)
 12/02/2026 - create comprehensive summary file (COMPLETE_SUMMARY.txt) combining all Q1-Q3 results
 12/02/2026 - add error handling for column name variations (orthologous_group_id vs index)
 12/02/2026 - ensure all result files are properly saved to results/ directory
-
+14/02/2026 - final adaptions
 
 2. Design decisions and why you made them, including approaches you tried that didn't work out
 
