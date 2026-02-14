@@ -1,0 +1,41 @@
+================================================================================
+METAZOAN GENE CONSERVATION AND LOSS ANALYSIS - COMPLETE SUMMARY
+Questions 1A-1E, Question 2, and Question 3
+================================================================================
+
+QUESTION 1: PRIMATE-SPECIFIC GENE ANALYSIS
+--------------------------------------------------------------------------------
+1A) Homologs in Human & Chimp but NOT in Mouse: 1073 OGs
+1B) Unique protein IDs: 52188
+1C) Functional categories found: 23
+    Top 3 categories:
+      - S: 534 genes
+      - K: 162 genes
+      - T: 131 genes
+1D) OGs found ONLY in Human and Chimp: 21 OGs
+1E) Primate-specific OGs: 167 OGs
+
+QUESTION 2: LINEAGE ANALYSIS
+--------------------------------------------------------------------------------
+Core vertebrate OGs (Primates + Chicken + Fish): 9861
+Lost in BOTH Mouse and Rat: 108
+Lost ONLY in Mouse: 63
+Lost ONLY in Rat: 138
+
+QUESTION 3: UNIVERSAL ANIMAL GENES
+--------------------------------------------------------------------------------
+Total unique species in dataset: 161
+Universal OGs (99%+): 694
+
+================================================================================
+RESULT FILES SAVED:
+--------------------------------------------------------------------------------
+Question 1:
+  - results/1_A_homologs.txt
+  - results/1_B_unique_protein_IDs.txt
+  - results/1_C_functional_category_counts.csv
+Question 2:
+  - results/2_detailed_results.txt
+Question 3:
+  - results/3_universal_ogs.tsv
+================================================================================
