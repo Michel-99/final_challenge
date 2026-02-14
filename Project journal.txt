@@ -179,7 +179,7 @@ The time below includes total time of: first ideas, disussion within the group, 
 2: 4hrs
 3: 2hrs
 
-
+Additional files like ReadMe, Journal ect.: 3-4 hrs
 
 
 Import Data contains:
