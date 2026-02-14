@@ -176,6 +176,13 @@ runall.py", line 249
 IndentationError: unexpected indent
 Bug fixed, it was just a typo.
 
+
+--- SyntaxWarning----
+/home/michel/Desktop/python/final_challenge/1-3_runall.py:274: SyntaxWarning: invalid escape sequence '\ '
+  print(f"\ Main summary: {summary_file}")
+
+Solution: Escape carachter removed.
+
 4. Approximate time spent on each part
 
 The time below includes total time of: first ideas, disussion within the group, coding, bug fixing and again disucssion of the results within the group (and potentially going back to the code to fix something).

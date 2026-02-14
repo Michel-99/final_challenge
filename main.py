@@ -1,12 +1,13 @@
 import eggnog_library as eggnog
 import csv
 
-# set up result file directories
+# set up result file directory
 
 result_1A = "results/1_A_homologs.txt"
 result_1B = "results/1_B_unique_protein_IDs.txt"
 result_1C = "results/1_C_functional_category_counts.csv"
 result_detailed_2 = "results/2_detailed_results.txt"
+result_3 = "results/3_universal_ogs.tsv"
 summary_file = "results/COMPLETE_SUMMARY.txt"
 
 # Dataframe setup
@@ -59,7 +60,7 @@ print("Writing unique protein IDs to 1_B_unique_protein_IDs.txt file in /results
 with open(result_1B, "w") as f:
     f.write("\n".join(unique_protein_ids))
 
-###---------------------------------------
+###----------------------------------------------------------------------
 ### 1) C) functional categories of homologous genes
 
 # get functional categories for homologous genes by merging with annotations dataframe on orthologous group id
@@ -87,7 +88,7 @@ print("Exporting result table to results/1_C_functional_category_counts.csv ..."
 category_counts_df.to_csv(result_1C, index=False)
 
 
-###---------------------------------------
+###----------------------------------------------------------------------
 ### 1) D) ortholog genes found only in humans and chimp.
 
 
@@ -98,7 +99,7 @@ unique_orth_genes = homologs_df.loc[
 print(f"{len(unique_orth_genes)} ortholog genes are only found in human and chimps")
 
 
-###---------------------------------------
+###----------------------------------------------------------------------
 ### 1 E) ortholog genes found only in primates
 
 
@@ -107,7 +108,7 @@ primate_specific_OG = eggnog.filter_by_species_names(
 )
 print(f"{len(primate_specific_OG)} ortholog genes are only found in primates.")
 
-
+###----------------------------------------------------------------------
 ### QUESTION 2: Lineage Analysis - Primates, Chicken, Fish vs Rodents
 print("\n" + "=" * 80)
 print("QUESTION 2: LINEAGE ANALYSIS")
@@ -117,56 +118,26 @@ print("=" * 80)
 print("\nCleaning TaxIDs (removing protein suffixes)...")
 
 
-def clean_taxid_string(raw_string):  # TODO
-    """
-    Input: "9606.ENSP123, 10090.ENSMUSP456, 10116.ENSRNOP789"
-    Output: Set{9606, 10090, 10116}
-    """
-    s = str(raw_string)
-    items = s.split(",")
-    clean_set = {int(item.split(".")[0].strip()) for item in items}
-    return clean_set
-
-
 # Apply the cleaning function
 df_members["clean_taxid_set"] = df_members["species_taxid_containing_protein"].apply(
-    clean_taxid_string
+    eggnog.clean_taxid_string
 )
 
 print("Analyzing lineage conservation and loss...")
 
 # Define Target IDs (verified these are standard TaxIDs)
-IDS = {
-    "human": 9606,
-    "chimp": 9598,
-    "chicken": 9031,
-    "danio": 7955,
-    "takifugu": 31033,
-    "mouse": 10090,
-    "rat": 10116,
-}
-
-
-def get_og_set(target_taxid):  # TODO
-    # use mask instead string matching
-    mask = df_members["clean_taxid_set"].apply(lambda s: target_taxid in s)
-    og_col = (
-        "orthologous_group_id"
-        if "orthologous_group_id" in df_members.columns
-        else df_members.index.name
-    )
-    if og_col in df_members.columns:
-        return set(df_members.loc[mask, og_col])
-    else:
-        return set(df_members.loc[mask].index)
 
 
 # Retrieve sets
-primates_q2 = get_og_set(IDS["human"]) | get_og_set(IDS["chimp"])
-chicken = get_og_set(IDS["chicken"])
-fish = get_og_set(IDS["danio"]) | get_og_set(IDS["takifugu"])
-mouse = get_og_set(IDS["mouse"])
-rat = get_og_set(IDS["rat"])
+primates_q2 = eggnog.get_og_set(
+    eggnog.IDS_EX2["human"], df_members
+) | eggnog.get_og_set(eggnog.IDS_EX2["chimp"], df_members)
+chicken = eggnog.get_og_set(eggnog.IDS_EX2["chicken"], df_members)
+fish = eggnog.get_og_set(eggnog.IDS_EX2["danio"], df_members) | eggnog.get_og_set(
+    eggnog.IDS_EX2["takifugu"], df_members
+)
+mouse = eggnog.get_og_set(eggnog.IDS_EX2["mouse"], df_members)
+rat = eggnog.get_og_set(eggnog.IDS_EX2["rat"], df_members)
 
 print(f"\n=== SET SIZES ===")
 print(f"Primates OGs: {len(primates_q2)}")
@@ -207,8 +178,9 @@ with open(result_detailed_2, "w") as f:
         + "\n".join(str(og) for og in list(lost_both)[:10])
     )
 
-print(f"\n✅ Q2 Results saved to {output_file_q2}")
+print(f"\n✅ Q2 Results saved to {result_detailed_2}")
 
+###----------------------------------------------------------------------
 ### QUESTION 3: Universal Genes (99% or more of all animal species)
 
 print("\nIdentifying universal animal genes...")
@@ -233,19 +205,18 @@ universal_ogs = df_members[df_members["actual_sp_count"] >= threshold]
 print(f"✅ Found {len(universal_ogs)} universal OGs (99%+ species)")
 
 # Save Q3 Results
-output_file_q3 = "results/3_universal_ogs.tsv"  # TODO
+
 og_col = (
     "orthologous_group_id" if "orthologous_group_id" in universal_ogs.columns else None
 )
 if og_col:
-    universal_ogs[[og_col, "actual_sp_count"]].to_csv(
-        output_file_q3, sep="\t", index=False
-    )
+    universal_ogs[[og_col, "actual_sp_count"]].to_csv(result_3, sep="\t", index=False)
 else:
-    universal_ogs[["actual_sp_count"]].to_csv(output_file_q3, sep="\t")
+    universal_ogs[["actual_sp_count"]].to_csv(result_3, sep="\t")
 
-print(f"✅ Q3 Results saved to {output_file_q3}")
+print(f"✅ Q3 Results saved to {result_3}")
 
+###----------------------------------------------------------------------
 # save files
 
 print("\n" + "=" * 80)
@@ -300,6 +271,6 @@ print(f"\n✅ Complete summary saved to: {summary_file}")
 print("\n" + "=" * 80)
 print("ALL ANALYSES COMPLETE!")
 print("=" * 80)
-print(f"\ Main summary: {summary_file}")
-print(" All result files saved to: results/")
+print(f"Main summary: {summary_file}")
+print("All result files saved to: results/")
 print("\n" + "=" * 80)
