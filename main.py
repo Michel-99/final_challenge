@@ -42,8 +42,6 @@ with open(result_1A, "w") as f:
         f'We identified {len(homologs_df)} homologous genes shared by "{", ".join([eggnog.get_species_name_by_id(n, df_species) for n in include])}" that have diverged or are absent in "{", ".join([eggnog.get_species_name_by_id(n, df_species) for n in exclude])}"'
     )
 
-# create temporary .csv of homologs for further use
-homologs_df.reset_index().to_csv("temp/1_A_homologs_.tsv", sep="\t", index=False)
 
 ###----------------------------------------------------------------------
 ### 1) B) extract unique protein IDs from homologs file and

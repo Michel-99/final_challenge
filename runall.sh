@@ -11,7 +11,6 @@ fi
 echo "Creating directory structure..."
 mkdir -p results
 mkdir -p doc
-mkdir -p temp
 mkdir -p data
 mkdir -p data/zips
 
