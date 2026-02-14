@@ -30,6 +30,25 @@ Project Journal (don´t forget timestamps!!!)
 - better code readability compared to nested loops and dictionaries
 
 using set --> faster than list, O(1) vs O(n), it also allows one-liner insteasd of more loops, getting rid of dubplications
+The decision was based on a collection of links that we found after researching the topic and discussed in the group. We also used Copilot on Github to obtain additional feedback on our ideas/choices. The websites used to gather information are listed below, although the order of the links does not correspond to the order in which they were used.
+ 
+https://biopython.org/docs/latest/Tutorial/index.html
+https://stackoverflow.com/questions/11707586/how-do-i-expand-the-output-display-to-see-more-columns-of-a-pandas-dataframe
+https://stackoverflow.com/questions/642154/how-do-i-convert-all-strings-in-a-list-of-lists-to-integers
+https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
+https://www.geeksforgeeks.org/python/different-types-of-joins-in-pandas/
+https://stackoverflow.com/questions/19960077/how-to-filter-pandas-dataframe-using-in-and-not-in-like-in-sql
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html
+https://stackoverflow.com/questions/34962104/how-can-i-use-the-apply-function-for-a-single-column
+https://www.geeksforgeeks.org/python/python-set-operations-union-intersection-difference-symmetric-difference/
+https://docs.python.org/3/tutorial/datastructures.html#sets
+https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.explode.html
+https://pandas.pydata.org/docs/reference/api/pandas.Series.str.split.html
+https://stackoverflow.com/questions/26147180/convert-row-to-column-header-for-pandas-dataframe
+https://stackoverflow.com/questions/20490274/how-to-reset-index-in-a-pandas-dataframe
+https://www.w3schools.com/python/pandas/default.asp
+https://realpython.com/pandas-dataframe/
+https://pandas.pydata.org/docs/user_guide/dsintro.html#dataframe
 
 3. Testing and bugs encountered (with exact error messages and line numbers), and how you solved them
 
@@ -150,7 +169,15 @@ def clean_taxid_string(raw_string):
 
 4. Approximate time spent on each part
 
+The time below includes total time of: first ideas, disussion within the group, coding, bug fixing and again disucssion of the results within the group (and potentially going back to the code to fix something).
 
+1a: 4hrs
+1b: 2hrs
+1c: 1hr
+1d: 2hrs
+1e: 1hr
+2: 4hrs
+3: 2hrs
 
 
 
