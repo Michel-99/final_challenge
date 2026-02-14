@@ -142,7 +142,6 @@ def run_analysis():
     # DO NOT reset_index() unless you understand what it does!
 
 
-
 ### Fix 1: Handling the OG column
 Instead of just assuming the column name, I check both places:
 ```python
@@ -168,6 +167,14 @@ def clean_taxid_string(raw_string):
     items = s.split(",")
     clean_set = {int(item.split(".")[0].strip()) for item in items}
     return clean_set
+
+---Bug 4 ---
+14/02/2026
+Running the whole code to ensure everything is working: 
+runall.py", line 249
+    universal_ogs[[og_col, "actual_sp_count"]].to_csv(
+IndentationError: unexpected indent
+Bug fixed, it was just a typo.
 
 4. Approximate time spent on each part
 
