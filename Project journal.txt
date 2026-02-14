@@ -10,10 +10,10 @@ Project Journal (don´t forget timestamps!!!)
 29/01/2026 - CATCH UP - implement type hints and doctests for eggnog library functions; improve docstrings
 04/02/2026 - start work on Question 2: lineage-specific gene loss analysis
 04/02/2026 - initial idea: count how many species each orthologous group appears in
-11/02/2026 - decided to calculate total species count dynamically from data instead of hardcoding
 06/02/2026 - work on getting functional categories from identified genes
 07/02/2026 - count occurence of functional categories, add matching category description and output sorted by number of occurences to .csv table
 10/02/2026 - debugging code for q2 & q3
+11/02/2026 - decided to calculate total species count dynamically from data instead of hardcoding
 12/02/2026 - create comprehensive summary file (COMPLETE_SUMMARY.txt) combining all Q1-Q3 results
 12/02/2026 - add error handling for column name variations (orthologous_group_id vs index)
 12/02/2026 - ensure all result files are properly saved to results/ directory
