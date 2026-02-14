@@ -1,0 +1,105 @@
+# README - Questions 2 & 3
+
+Analysis script for gene conservation patterns in vertebrates (Question 2) and finding universal animal genes (Question 3).
+
+## What this does
+
+**Question 2:** Looks at genes that are conserved across primates, chicken, and fish, then checks which ones got lost in rodents (mouse and/or rat)
+
+**Question 3:** Finds genes that are present in almost all animal species (99% threshold)
+
+## Files
+
+```
+question_2_3_analysis.py    # the main script
+results/
+  ├── question_2_detailed_results.txt
+  └── q3_universal_ogs.tsv
+```
+
+## How to run
+
+```bash
+python question_2_3_analysis.py
+```
+
+Make sure you're in the correct directory first
+
+```
+
+## The logic
+
+### Question 2
+1. Get all OGs present in humans OR chimps (primates)
+2. Get OGs in chicken
+3. Get OGs in zebrafish OR fugu (fish)
+4. Core set = genes in ALL three groups (primates AND chicken AND fish)
+5. Then check which core genes are missing in mouse/rat
+
+The set operations:
+- Lost in both: `core_set - (mouse | rat)`
+- Lost only in mouse: `(core_set & rat) - mouse`
+- Lost only in rat: `(core_set & mouse) - rat`
+
+### Question 3
+Count how many species each OG appears in, then filter for OGs that appear in ≥99% of all species in the dataset.
+
+## Species taxids used
+
+```python
+human: 9606
+chimp: 9598
+chicken: 9031
+danio (zebrafish): 7955
+takifugu (fugu): 31033
+mouse: 10090
+rat: 10116
+```
+
+## Outputs
+
+`question_2_detailed_results.txt` has:
+- How many genes are in the core vertebrate set
+- How many were lost in both rodents
+- How many were lost only in mouse
+- How many were lost only in rat
+- List of example OGs that were lost
+
+`q3_universal_ogs.tsv` is a table with:
+- Orthologous group ID
+- How many species it appears in
+
+Results:
+
+================================================================================
+QUESTION 2: LINEAGE ANALYSIS
+Orthologs in Primates + Chicken + Fish, checking losses in Rodents
+================================================================================
+
+Cleaning TaxIDs (removing protein suffixes)...
+Analyzing lineage conservation and loss...
+
+=== SET SIZES ===
+Primates OGs: 15478
+Chicken OGs: 11494
+Fish OGs: 14786
+Mouse OGs: 14541
+Rat OGs: 14407
+
+Core vertebrate OGs (in Primates + Chicken + Fish): 9861
+Lost in BOTH Mouse and Rat: 108
+Lost ONLY in Mouse: 63
+Lost ONLY in Rat: 138
+
+✅ Q2 Results saved to results/2_detailed_results.txt
+
+================================================================================
+QUESTION 3: UNIVERSAL ANIMAL GENES
+OGs present in 99% or more of all animal species
+================================================================================
+
+Identifying universal animal genes...
+Total unique species found in file: 161
+Threshold for universal (99%): 159.39
+✅ Found 694 universal OGs (99%+ species)
+✅ Q3 Results saved to results/3_universal_ogs.tsv
