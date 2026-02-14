@@ -7,6 +7,23 @@ import re
 import csv
 
 # --FUNCTIONS--
+PRIMATES = {
+    "Homo sapiens",
+    "Tarsius syrichta",
+    "Callithrix jacchus",
+    "Macaca fascicularis",
+    "Papio anubis",
+    "Gorilla gorilla",
+    "Pan paniscus",
+    "Pan troglodytes",
+    "Pongo abelii",
+    "Saimiri boliviensis",
+    "Chlorocebus sabaeus",
+    "Rhinopithecus roxellana",
+    "Nomascus leucogenys",
+    "Otolemur garnettii",
+    "Macaca mulatta",
+}
 
 
 # -- Dataframe setup functions--
@@ -140,8 +157,7 @@ def get_species_id_by_name(species_name: str, df: pd.DataFrame) -> int:
         >>> get_species_id_by_name('E. coli', df)
         562
     """
-    species_id = df.loc[df["species_name"] == species_name, "species_taxid"].item()
-    return species_id
+    return df.loc[df["species_name"] == species_name, "species_taxid"].item()
 
 
 def get_species_name_by_id(species_id: int, df: pd.DataFrame) -> str:
@@ -162,8 +178,28 @@ def get_species_name_by_id(species_id: int, df: pd.DataFrame) -> str:
         >>> get_species_name_by_id(9606, df)
         'H. sapiens'
     """
-    species_name = df.loc[df["species_taxid"] == species_id, "species_name"].item()
-    return species_name
+    return df.loc[df["species_taxid"] == species_id, "species_name"].item()
+
+
+def get_species_ids_from_names(species_names, df_species: pd.DataFrame) -> List[int]:
+    """
+    Convert a list or set of species names to their corresponding IDs.
+
+    Args:
+        species_names: Iterable of species name strings
+        df_species: Species dataframe containing taxid info
+
+    Returns:
+        List[int]: List of species IDs
+
+    Examples:
+        >>> import pandas as pd
+        >>> data = {'species_name': ['E. coli', 'H. sapiens'], 'species_taxid': [562, 9606]}
+        >>> df = pd.DataFrame(data)
+        >>> get_species_ids_from_names(['E. coli', 'H. sapiens'], df)
+        [562, 9606]
+    """
+    return [get_species_id_by_name(name, df_species) for name in species_names]
 
 
 def filter_by_ids(
@@ -263,6 +299,42 @@ def write_protein_id(file_path: str, output_path: str) -> None:
         unique = extract_protein_id(file_path)
         for id in unique:
             file.write(f"{id}\n")
+
+
+def filter_by_species_names(
+    df: pd.DataFrame, column: str, species_names, df_species: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Filter dataframe to include only rows where the specified column
+    contains any of the given species (by name).
+
+    This is a convenience wrapper that converts species names to IDs
+    and then filters the dataframe.
+
+    Args:
+        df: Dataframe to filter
+        column: Column name containing species IDs
+        species_names: Iterable of species names to include
+        df_species: Species dataframe for name-to-ID mapping
+
+    Returns:
+        pd.DataFrame: Filtered dataframe
+
+    Examples:
+        >>> import pandas as pd
+        >>> df = pd.DataFrame({'ids': ['562,9606', '9606', '562']})
+        >>> species_df = pd.DataFrame({
+        ...     'species_name': ['E. coli', 'H. sapiens'],
+        ...     'species_taxid': [562, 9606]
+        ... })
+        >>> filter_by_species_names(df, 'ids', ['E. coli', 'H. sapiens'], species_df)
+           ids
+        0  562,9606
+        1  9606
+        2  562
+    """
+    species_ids = get_species_ids_from_names(species_names, df_species)
+    return filter_allowed_ids(df, column, species_ids)
 
 
 def filter_allowed_ids(
