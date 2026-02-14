@@ -34,7 +34,7 @@ echo "Setup complete!"
 if [ "$RUN_ANALYSIS" = true ]; then
     echo ""
     echo "Running analysis..."
-    python 1-3_runall.py
+    python main.py
     echo ""
     echo "All done! Check results/ folder for output files."
 else
