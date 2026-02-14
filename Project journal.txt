@@ -19,8 +19,6 @@ Project Journal (don´t forget timestamps!!!)
     Description: While creating dataframes from input files, i tried to set a specific column as index using df.set_index('column_name'), but encountered a KeyError.
     Solution: The column names were defined after setting the index, so i rearranged the code to first set the column names and then set the index.
 
-?Part michel missing?
-
 29/01/2026 - create function to get species name through species id input
 
 29/01/2026 - CATCH UP - implement type hints and doctests for eggnog library functions; improve docstrings
