@@ -85,7 +85,7 @@ Total unique species in dataset: 161
 Universal OGs (99%+): 694
 
 # group members
-Josef Birnöcker: 1)a)
+Josef Birnöcker: 1)a-c)
 Clara Pernold: 2 & 3
 Michel Zwicker: 1)b-e)
 All of the individuals mentioned contributed equally to the project, and the codes and ideas were regularly discussed in team meetings.
