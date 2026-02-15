@@ -11,6 +11,8 @@ Project Journal (don´t forget timestamps!!!)
         results:
         Advantages of pandas: easy manipulation of dataframes
         disatvantages: RAM-usage as pandas loads entire dataset into RAM --> in our case the datasets are not too big
+    possible Errors regarding pandas which could arise were discussed together and with claude.
+        decision to include 3 possible error for file missing/corrupted or empty files were deemed to be the most likely and therfore included. 
 
 20/01/2026 - get species id from names (species dataframe) and look for orthologous groups in the last column of members dataframe (inclusion/exclusion)
     --Bug 1--
