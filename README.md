@@ -24,7 +24,7 @@ runall.sh
   
 2. download eggnog data for metazoans (ID 33208) into /data directory
 
-mian.py
+main.py
 3. set up result .txt file structure in /results directory and assign variables to result files for better usability
 4. create pandas dataframes from previously downloaded third party eggnog data 
 5. look for homologs genes in humans and chimps but not mice
@@ -34,7 +34,18 @@ mian.py
    * output to result-file
 6. extract protein IDs for found homologs from previous step
    * extract from pandas dataframe and convert to single line output string (using .strip(), .unique(), etc.)
-7. 
+7. analyze functional categories of homologous genes 
+   * merge homologs with annotations on orthologous_group_id
+   * explode functional categories (genes can have multiple)
+   * count occurrences and merge with category descriptions
+   * export to CSV with readable category names
+8. identify OGs unique to Human and Chimp 
+   * filter for OGs where num_of_species == 2, using the already for human and chimp filtered dataset
+   * isolate genes present only in this species pair
+9. identify primate-specific OGs (1E)
+   * use filter_by_species_names() with PRIMATES list
+   * find OGs conserved across all primates but absent in other lineages
+
 
 ## Troubleshooting
 #Import errors
