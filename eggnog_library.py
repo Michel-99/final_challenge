@@ -67,19 +67,19 @@ def dataframe_setup_annotations() -> pd.DataFrame:
             names=column_names,
             # index_col="orthologous_group_id",
         )
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         raise FileNotFoundError(
             "File '33208_annotations.tsv' not found. Run: bash runall.sh to download files."
-        )
+        ) from e
     except pd.errors.ParserError as e:
         raise pd.errors.ParserError(
             f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
             f"Details: {e}"
-        )
-    except pd.errors.EmptyDataError:
+        ) from e
+    except pd.errors.EmptyDataError as e:
         raise pd.errors.EmptyDataError(
             "Data file is empty. Re-download with: bash runall.sh"
-        )
+        ) from e
     return df
 
 
@@ -117,19 +117,19 @@ def dataframe_setup_members() -> pd.DataFrame:
             names=column_names,
             # index_col="orthologous_group_id",
         )
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         raise FileNotFoundError(
             "File '33208_members.tsv' not found. Run: bash runall.sh to download files."
-        )
+        ) from e
     except pd.errors.ParserError as e:
         raise pd.errors.ParserError(
             f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
             f"Details: {e}"
-        )
-    except pd.errors.EmptyDataError:
+        ) from e
+    except pd.errors.EmptyDataError as e:
         raise pd.errors.EmptyDataError(
             "Data file is empty. Re-download with: bash runall.sh"
-        )
+        ) from e
     return df
 
 
@@ -161,19 +161,19 @@ def dataframe_setup_taxid_info() -> pd.DataFrame:
         df = pd.read_csv(
             "data/e5.taxid_info.tsv", sep="\t", header=0, names=column_names
         )
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         raise FileNotFoundError(
             "File 'e5.taxid_info.tsv' not found. Run: bash runall.sh to download files."
-        )
+        ) from e
     except pd.errors.ParserError as e:
         raise pd.errors.ParserError(
             f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
             f"Details: {e}"
-        )
-    except pd.errors.EmptyDataError:
+        ) from e
+    except pd.errors.EmptyDataError as e:
         raise pd.errors.EmptyDataError(
             "Data file is empty. Re-download with: bash runall.sh"
-        )
+        ) from e
     return df
 
 
@@ -208,19 +208,19 @@ def dataframe_setup_functional_categories() -> pd.DataFrame:
                     data.append([letter, description])
 
         df = pd.DataFrame(data, columns=["category_code", "description"])
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         raise FileNotFoundError(
             "File 'eggnog4.functional_categories.txt' not found. Run: bash runall.sh to download files."
-        )
+        ) from e
     except pd.errors.ParserError as e:
         raise pd.errors.ParserError(
             f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
             f"Details: {e}"
-        )
-    except pd.errors.EmptyDataError:
+        ) from e
+    except pd.errors.EmptyDataError as e:
         raise pd.errors.EmptyDataError(
             "Data file is empty. Re-download with: bash runall.sh"
-        )
+        ) from e
     return df
 
 
