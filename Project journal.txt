@@ -35,6 +35,24 @@ Project Journal (don´t forget timestamps!!!)
 04/02/2026 - initial idea: count how many species each orthologous group appears in
 06/02/2026 - work on getting functional categories from identified genes
 07/02/2026 - count occurence of functional categories, add matching category description and output sorted by number of occurences to .csv table
+07-08/02/2026 - solve 1 d-e:
+                1d) filter homologs_df for orthologous groups found in exactly 2 species (human + chimp only) using df_members["num_of_species"] == 2
+                1e) identify primate-specific orthologous groups by filtering homologs against PRIMATES constant (set of 15 primate species)
+                    - created filter_by_species_names() function in eggnog_library to simplify species name filtering
+                    - moved PRIMATES constant from runall script to eggnog_library for reusability
+                    - function chains get_species_ids_from_names() and filter_allowed_ids() for cleaner implementation
+                LLM usage for this step: an initial plan/idea for the code/solution was made and with the initial code block/method Claude(GithubCopilot)
+                    was asked if certain improvements can be made and if options can be provided. 
+                    example: " how can i improve this: primate_ids = []
+                            for species in eggnog.PRIMATES:
+                            species_id = eggnog.get_species_id_by_name(species, df_species)
+                            primate_ids.append(species_id)
+                        
+                        homologs_filtered = eggnog.filter_allowed_ids(
+                            homologs_df, "species_taxid_containing_protein", primate_ids
+                        )
+                        maybe I add a method for it in the eggnog library, can you give me some options?"
+
 10/02/2026 - debugging code for q2 & q3  !LLM-usage: --> details see below in Bug 3
 11/02/2026 - decided to calculate total species count dynamically from data instead of hardcoding
 12/02/2026 - create comprehensive summary file (COMPLETE_SUMMARY.txt) combining all Q1-Q3 results
