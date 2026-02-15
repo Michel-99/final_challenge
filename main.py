@@ -91,7 +91,7 @@ category_counts_df.to_csv(result_1C, index=False)
 
 
 unique_orth_genes = homologs_df.loc[
-    df_members["num_of_species"] == 2,
+    homologs_df["num_of_species"] == 2,
     ["orthologous_group_id", "species_taxid_containing_protein"],
 ]
 print(f"{len(unique_orth_genes)} ortholog genes are only found in human and chimps")
