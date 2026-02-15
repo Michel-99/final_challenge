@@ -16,10 +16,14 @@ Own created libraries: eggnog_library
 The pipeline can be run with the runall.sh script, which creates necessary folders, downloads the data and runs the analysis. 
 The bash script can be run in a way, that the analysis is not performed. 
 
+
 1. execute ```bash runall.sh```
 or 
 1. execute ```bash runall.sh --skip-analysis```
 2. execute ```python main.py```
+
+The results of the analysis can be found in the results directory. 
+
 
 ## Structure
 runall.sh
