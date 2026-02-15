@@ -2,12 +2,12 @@ Project Journal (don´t forget timestamps!!!)
 
 
 19/01/2026 - setup project on github and create prepare.sh for directory setup and input download,
-    !LLM-usage: learn github with gemini canvas
+    !LLM-usage: learn github with gemini canvas and Copilot on Github)
 
 20/01/2026 - planning to use a modular structure with a main runnal-file and a seperate library for helper functions etc.
 
 20/01/2026 - decided to use panda libray to create dataframes for easier data manipulation
-    !LLM-usage: discussed pros and cons of using pandas vs read/write csv 
+    !LLM-usage: discussed pros and cons of using pandas vs read/write csv  (Copilot on Github and Gemini pro)
         results:
         Advantages of pandas: easy manipulation of dataframes
         disatvantages: RAM-usage as pandas loads entire dataset into RAM --> in our case the datasets are not too big
@@ -33,12 +33,13 @@ Project Journal (don´t forget timestamps!!!)
 04/02/2026 - initial idea: count how many species each orthologous group appears in
 06/02/2026 - work on getting functional categories from identified genes
 07/02/2026 - count occurence of functional categories, add matching category description and output sorted by number of occurences to .csv table
-10/02/2026 - debugging code for q2 & q3 --> details see below
+10/02/2026 - debugging code for q2 & q3  !LLM-usage: --> details see below in Bug 3
 11/02/2026 - decided to calculate total species count dynamically from data instead of hardcoding
 12/02/2026 - create comprehensive summary file (COMPLETE_SUMMARY.txt) combining all Q1-Q3 results
 12/02/2026 - add error handling for column name variations (orthologous_group_id vs index)
 12/02/2026 - ensure all result files are properly saved to results/ directory
-14/02/2026 - final adaptions, created a summary file --> Copilot was used for that. Question asked: "I want to create a summary txt file for all results in the script".
+14/02/2026 - final adaptions, created a summary file 
+               !LLM-usage: Copilot was used for that. Question asked: "I want to create a summary txt file for all results in the script".
 
 
 20/01/2026 decided to use pandas library for the following reasons:
@@ -50,8 +51,8 @@ Project Journal (don´t forget timestamps!!!)
 - better code readability compared to nested loops and dictionaries
 
 using set --> faster than list, O(1) vs O(n), it also allows one-liner insteasd of more loops, getting rid of dubplications
-The decision was based on a collection of what we had learned in the course and links that we found after researching the topic and discussed in the group.
-We also used Copilot on Github to obtain additional feedback on our ideas/choices. 
+The decision was based on a collection of what we had learned in the course and links that we found after researching the topic and discussed within the group.
+We also used Copilot on Github and Gemini pro to obtain additional feedback on our ideas/choices as stated above within the timestaps.
 The websites used to gather information are listed below, although the order of the links does not correspond to the order in which they were used.
  
 https://biopython.org/docs/latest/Tutorial/index.html
@@ -100,9 +101,9 @@ Lost ONLY in Rat: 0
 Solution:  Debugging section, the column name was checked, the finding of the species taxid column was adapted and the taxids were converted into integers.
 
 Solution as mentioned with Copilot on Github for this bug:
-The main issue was that the eggnog_library returns dataframes where the orthologous group IDs can be either in the index OR as a column, depending on how the data is structured. 
+The main issue was that the eggnog_library returns dataframes where the orthologous group IDs can be either in the index or as a column, depending on how the data is structured. 
 I had to add checks to handle both cases. I had trouble figuring this out on my own  with the IDS ect. so I used Copilot on github for debugging help, asking him what issues could be the reasons for the empty files, since I did not get an error message while running the code. 
-Debug sections done with Copilot were as following
+Debug sections done with Copilot were as following:
 
 print("\n=== DEBUG: Checking each species ===")
 for key, taxid in IDS.items():
