@@ -13,6 +13,9 @@ Own created libraries: eggnog_library
 
 ## How to run
 
+The pipeline can be run with the runall.sh script, which creates necessary folders, downloads the data and runs the analysis. 
+The bash script can be run in a way, that the analysis is not performed. 
+
 1. execute ```bash runall.sh```
 or 
 1. execute ```bash runall.sh --skip-analysis```
