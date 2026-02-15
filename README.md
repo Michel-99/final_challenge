@@ -12,10 +12,12 @@ Third party libraries: pandas, os, sys, csv
 Own created libraries: eggnog_library
 
 ## How to run
+
 1. execute ```bash runall.sh```
 or 
 1. execute ```bash runall.sh --skip-analysis```
 2. execute ```python main.py```
+
 ## Structure
 runall.sh
 1. create directory structure 

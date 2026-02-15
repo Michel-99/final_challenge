@@ -33,12 +33,12 @@ Project Journal (don´t forget timestamps!!!)
 04/02/2026 - initial idea: count how many species each orthologous group appears in
 06/02/2026 - work on getting functional categories from identified genes
 07/02/2026 - count occurence of functional categories, add matching category description and output sorted by number of occurences to .csv table
-10/02/2026 - debugging code for q2 & q3
+10/02/2026 - debugging code for q2 & q3 --> details see below
 11/02/2026 - decided to calculate total species count dynamically from data instead of hardcoding
 12/02/2026 - create comprehensive summary file (COMPLETE_SUMMARY.txt) combining all Q1-Q3 results
 12/02/2026 - add error handling for column name variations (orthologous_group_id vs index)
 12/02/2026 - ensure all result files are properly saved to results/ directory
-14/02/2026 - final adaptions, created a summary file --> Copilot was used for that. Questions asked: "I want to create a summary txt file for all results in the script".
+14/02/2026 - final adaptions, created a summary file --> Copilot was used for that. Question asked: "I want to create a summary txt file for all results in the script".
 
 
 20/01/2026 decided to use pandas library for the following reasons:
@@ -100,10 +100,9 @@ Lost ONLY in Rat: 0
 Solution:  Debugging section, the column name was checked, the finding of the species taxid column was adapted and the taxids were converted into integers.
 
 Solution as mentioned with Copilot on Github for this bug:
-## What I had to fix
 The main issue was that the eggnog_library returns dataframes where the orthologous group IDs can be either in the index OR as a column, depending on how the data is structured. 
-I had to add checks to handle both cases. I had trouble figuring this out on my own  with the IDS ect. so I used Copilot on github for debugging help. 
-Debug sections done with Copilot were as following:
+I had to add checks to handle both cases. I had trouble figuring this out on my own  with the IDS ect. so I used Copilot on github for debugging help, asking him what issues could be the reasons for the empty files, since I did not get an error message while running the code. 
+Debug sections done with Copilot were as following
 
 print("\n=== DEBUG: Checking each species ===")
 for key, taxid in IDS.items():
