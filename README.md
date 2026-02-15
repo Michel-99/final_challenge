@@ -12,18 +12,19 @@ Third party libraries: pandas, os, sys, csv
 Own created libraries: eggnog_library
 
 ## How to run
-1. execute bash 00_prepare.sh
-2. execute runall.py
-
+1. execute ```bash runall.sh```
+or 
+1. execute ```bash runall.sh --skip-analysis```
+2. execute ```python main.py```
 ## Structure
-00_prepare.ssh
+runall.sh
 1. create directory structure 
    * /data
    * /results
-   * temp
+  
 2. download eggnog data for metazoans (ID 33208) into /data directory
 
-runall.py
+mian.py
 3. set up result .txt file structure in /results directory and assign variables to result files for better usability
 4. create pandas dataframes from previously downloaded third party eggnog data 
 5. look for homologs genes in humans and chimps but not mice
@@ -33,6 +34,7 @@ runall.py
    * output to result-file
 6. extract protein IDs for found homologs from previous step
    * extract from pandas dataframe and convert to single line output string (using .strip(), .unique(), etc.)
+7. 
 
 ## Troubleshooting
 #Import errors
