@@ -75,11 +75,11 @@ def dataframe_setup_annotations() -> pd.DataFrame:
         raise pd.errors.ParserError(
             f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
             f"Details: {e}"
-        )
-    except pd.errors.EmptyDataError:
+        ) from e
+    except pd.errors.EmptyDataError as e:
         raise pd.errors.EmptyDataError(
             "Data file is empty. Re-download with: bash runall.sh"
-        )
+        ) from e
     return df
 
 
@@ -125,11 +125,11 @@ def dataframe_setup_members() -> pd.DataFrame:
         raise pd.errors.ParserError(
             f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
             f"Details: {e}"
-        )
-    except pd.errors.EmptyDataError:
+        ) from e
+    except pd.errors.EmptyDataError as e:
         raise pd.errors.EmptyDataError(
             "Data file is empty. Re-download with: bash runall.sh"
-        )
+        ) from e
     return df
 
 
@@ -169,11 +169,11 @@ def dataframe_setup_taxid_info() -> pd.DataFrame:
         raise pd.errors.ParserError(
             f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
             f"Details: {e}"
-        )
-    except pd.errors.EmptyDataError:
+        ) from e
+    except pd.errors.EmptyDataError as e:
         raise pd.errors.EmptyDataError(
             "Data file is empty. Re-download with: bash runall.sh"
-        )
+        ) from e
     return df
 
 
@@ -408,7 +408,7 @@ def filter_by_species_names(
     try:
         species_ids = get_species_ids_from_names(species_names, df_species)
     except ValueError as e:
-        raise ValueError(f"Failed to resolve species names to IDs: {e}")
+        raise ValueError(f"Failed to resolve species names to IDs: {e}") from e
     return filter_allowed_ids(df, column, species_ids)
 
 
