@@ -12,8 +12,8 @@ Third party libraries: pandas, os, sys, csv
 Own created libraries: eggnog_library
 
 ## How to run
-1. execute bash 00_prepare.sh
-2. execute runall.py
+1. execute bash runall.sh
+2. execute Main.py
 
 ## Structure
 00_prepare.ssh
@@ -23,7 +23,7 @@ Own created libraries: eggnog_library
    * temp
 2. download eggnog data for metazoans (ID 33208) into /data directory
 
-runall.py
+main.py
 3. set up result .txt file structure in /results directory and assign variables to result files for better usability
 4. create pandas dataframes from previously downloaded third party eggnog data 
 5. look for homologs genes in humans and chimps but not mice
