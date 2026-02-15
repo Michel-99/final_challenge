@@ -188,8 +188,7 @@ def dataframe_setup_functional_categories() -> pd.DataFrame:
 
     Raises:
         FileNotFoundError: If the functional categories file is not found in the data directory.
-        pd.errors.ParserError: If the file is corrupted or malformed.
-        pd.errors.EmptyDataError: If the file is empty.
+        IOError: If there is an error reading the file.
     """
     try:
         data = []
@@ -212,14 +211,10 @@ def dataframe_setup_functional_categories() -> pd.DataFrame:
         raise FileNotFoundError(
             "File 'eggnog4.functional_categories.txt' not found. Run: bash runall.sh to download files."
         )
-    except pd.errors.ParserError as e:
-        raise pd.errors.ParserError(
-            f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
+    except IOError as e:
+        raise IOError(
+            f"Error reading file 'eggnog4.functional_categories.txt'. Re-download with: bash runall.sh\n"
             f"Details: {e}"
-        )
-    except pd.errors.EmptyDataError:
-        raise pd.errors.EmptyDataError(
-            "Data file is empty. Re-download with: bash runall.sh"
         )
     return df
 
