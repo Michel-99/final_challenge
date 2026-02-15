@@ -176,7 +176,7 @@ with open(result_detailed_2, "w") as f:
         + "\n".join(str(og) for og in list(lost_both)[:10])
     )
 
-print(f"\n✅ Q2 Results saved to {result_detailed_2}")
+print(f"\n Q2 Results saved to {result_detailed_2}")
 
 ###----------------------------------------------------------------------
 ### QUESTION 3: Universal Genes (99% or more of all animal species)
@@ -200,7 +200,7 @@ df_members["actual_sp_count"] = df_members["clean_taxid_set"].apply(len)
 # 3. Filter
 universal_ogs = df_members[df_members["actual_sp_count"] >= threshold]
 
-print(f"✅ Found {len(universal_ogs)} universal OGs (99%+ species)")
+print(f" Found {len(universal_ogs)} universal OGs (99%+ species)")
 
 # Save Q3 Results
 
@@ -212,7 +212,7 @@ if og_col:
 else:
     universal_ogs[["actual_sp_count"]].to_csv(result_3, sep="\t")
 
-print(f"✅ Q3 Results saved to {result_3}")
+print(f" Q3 Results saved to {result_3}")
 
 ###----------------------------------------------------------------------
 # save files
@@ -264,7 +264,7 @@ with open(summary_file, "w") as f:
     f.write("  - results/3_universal_ogs.tsv\n")
     f.write("=" * 80 + "\n")
 
-print(f"\n✅ Complete summary saved to: {summary_file}")
+print(f"\n Complete summary saved to: {summary_file}")
 
 print("\n" + "=" * 80)
 print("ALL ANALYSES COMPLETE!")
