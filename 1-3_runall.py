@@ -117,7 +117,7 @@ print("=" * 80)
 print("\nCleaning TaxIDs (removing protein suffixes)...")
 
 
-def clean_taxid_string(raw_string):  # TODO
+def clean_taxid_string(raw_string):
     """
     Input: "9606.ENSP123, 10090.ENSMUSP456, 10116.ENSRNOP789"
     Output: Set{9606, 10090, 10116}
@@ -147,7 +147,7 @@ IDS = {
 }
 
 
-def get_og_set(target_taxid):  # TODO
+def get_og_set(target_taxid):
     # use mask instead string matching
     mask = df_members["clean_taxid_set"].apply(lambda s: target_taxid in s)
     og_col = (
@@ -207,7 +207,7 @@ with open(result_detailed_2, "w") as f:
         + "\n".join(str(og) for og in list(lost_both)[:10])
     )
 
-print(f"\n✅ Q2 Results saved to {output_file_q2}")
+print(f"\n✅ Q2 Results saved to {result_detailed_2}")
 
 ### QUESTION 3: Universal Genes (99% or more of all animal species)
 
@@ -233,7 +233,7 @@ universal_ogs = df_members[df_members["actual_sp_count"] >= threshold]
 print(f"✅ Found {len(universal_ogs)} universal OGs (99%+ species)")
 
 # Save Q3 Results
-output_file_q3 = "results/3_universal_ogs.tsv"  # TODO
+output_file_q3 = "results/3_universal_ogs.tsv"
 og_col = (
     "orthologous_group_id" if "orthologous_group_id" in universal_ogs.columns else None
 )
@@ -300,6 +300,6 @@ print(f"\n✅ Complete summary saved to: {summary_file}")
 print("\n" + "=" * 80)
 print("ALL ANALYSES COMPLETE!")
 print("=" * 80)
-print(f"\ Main summary: {summary_file}")
-print(" All result files saved to: results/")
+print(f"Main summary: {summary_file}")
+print("All result files saved to: results/")
 print("\n" + "=" * 80)
