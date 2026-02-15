@@ -76,7 +76,7 @@ main.py
 - Check Python version: `python --version` (should be 3.9+)
 #Empty result files
 - Verify data downloaded correctly in `/data` directory
-- Check that 00_prepare.sh completed without errors
+- Check that bash runall.sh completed without errors
 
     ## Data Source
 This analysis uses the EggNOG 5.0 database:
