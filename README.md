@@ -47,7 +47,28 @@ main.py
 9. identify primate-specific OGs (1E)
    * use filter_by_species_names() with PRIMATES list
    * find OGs conserved across all primates but absent in other lineages
-
+10. analyze lineage conservation and losses (Question 2)
+   * clean TaxIDs by removing protein suffixes from species_taxid_containing_protein
+   * define target species sets (primates, chicken, fish, mouse, rat)
+   * retrieve OG sets for each species/group using get_og_set()
+   * identify core vertebrate genes (present in Primates + Chicken + Fish)
+   * detect rodent-specific losses (lost in both mouse and rat)
+   * detect species-specific losses (lost only in mouse OR only in rat)
+   * save results with example OGs and loss counts to result file
+11. identify universal animal genes (Question 3)
+   * extract all unique species from clean_taxid_set across entire dataset
+   * calculate 99% threshold based on total species count
+   * count actual species per OG from clean_taxid_set
+   * filter for OGs present in ≥99% of all species
+   * export universal OGs with species counts to TSV file
+12. generate comprehensive summary report
+   * create master summary file combining all analysis results
+   * write Question 1 results (1A-1E): homolog counts, protein IDs, functional categories, unique OGs, primate-specific OGs
+   * include top 3 functional categories with gene counts
+   * write Question 2 results: core vertebrate genes and rodent-specific losses
+   * write Question 3 results: total species count and universal OG count
+   * list all output files generated across analyses
+   * print completion status to console
 
 ## Troubleshooting
 #Import errors
