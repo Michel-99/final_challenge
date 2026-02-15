@@ -12,15 +12,18 @@ Third party libraries: pandas, os, sys, csv
 Own created libraries: eggnog_library
 
 ## How to run
-1. execute bash runall.sh
-2. execute Main.py
+
+1. execute ```bash runall.sh```
+or 
+1. execute ```bash runall.sh --skip-analysis```
+2. execute ```python main.py```
 
 ## Structure
-00_prepare.ssh
+runall.sh
 1. create directory structure 
    * /data
    * /results
-   * temp
+  
 2. download eggnog data for metazoans (ID 33208) into /data directory
 
 main.py
@@ -33,6 +36,18 @@ main.py
    * output to result-file
 6. extract protein IDs for found homologs from previous step
    * extract from pandas dataframe and convert to single line output string (using .strip(), .unique(), etc.)
+7. analyze functional categories of homologous genes 
+   * merge homologs with annotations on orthologous_group_id
+   * explode functional categories (genes can have multiple)
+   * count occurrences and merge with category descriptions
+   * export to CSV with readable category names
+8. identify OGs unique to Human and Chimp 
+   * filter for OGs where num_of_species == 2, using the already for human and chimp filtered dataset
+   * isolate genes present only in this species pair
+9. identify primate-specific OGs (1E)
+   * use filter_by_species_names() with PRIMATES list
+   * find OGs conserved across all primates but absent in other lineages
+
 
 ## Troubleshooting
 #Import errors
@@ -72,7 +87,7 @@ Total unique species in dataset: 161
 Universal OGs (99%+): 694
 
 # group members
-Josef Birnöcker: 1)a)
+Josef Birnöcker: 1)a-c)
 Clara Pernold: 2 & 3
 Michel Zwicker: 1)b-e)
 All of the individuals mentioned contributed equally to the project, and the codes and ideas were regularly discussed in team meetings.
