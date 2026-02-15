@@ -1,6 +1,0 @@
-Evolutionary Analysis: Primates, Chicken, Fish vs Rodents
-============================================================
-Conserved in Primates+Chicken+Fish: 9861
-Lost in both Mouse and Rat: 108
-Lost ONLY in Mouse: 63
-Lost ONLY in Rat: 138

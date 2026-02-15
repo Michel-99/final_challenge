@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import List, Optional, Set
 import pandas as pd
 import re
-import csv
+
 
 # --FUNCTIONS--
 PRIMATES = {
@@ -25,6 +25,16 @@ PRIMATES = {
     "Macaca mulatta",
 }
 
+IDS_EX2 = {
+    "human": 9606,
+    "chimp": 9598,
+    "chicken": 9031,
+    "danio": 7955,
+    "takifugu": 31033,
+    "mouse": 10090,
+    "rat": 10116,
+}
+
 
 # -- Dataframe setup functions--
 def dataframe_setup_annotations() -> pd.DataFrame:
@@ -37,21 +47,39 @@ def dataframe_setup_annotations() -> pd.DataFrame:
                       - orthologous_group_id (index)
                       - functional category
                       - functional_description
-    """
-    column_names = [
-        "evolutionary_level",
-        "orthologous_group_id",
-        "functional_category",
-        "functional_description",
-    ]
-    df = pd.read_csv(
-        "data/33208_annotations.tsv",
-        sep="\t",
-        header=None,
-        names=column_names,
-        # index_col="orthologous_group_id",
-    )
 
+    Raises:
+        FileNotFoundError: If the annotations file is not found in the data directory.
+        pd.errors.ParserError: If the file is corrupted or malformed.
+        pd.errors.EmptyDataError: If the file is empty.
+    """
+    try:
+        column_names = [
+            "evolutionary_level",
+            "orthologous_group_id",
+            "functional_category",
+            "functional_description",
+        ]
+        df = pd.read_csv(
+            "data/33208_annotations.tsv",
+            sep="\t",
+            header=None,
+            names=column_names,
+            # index_col="orthologous_group_id",
+        )
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            "File '33208_annotations.tsv' not found. Run: bash runall.sh to download files."
+        )
+    except pd.errors.ParserError as e:
+        raise pd.errors.ParserError(
+            f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
+            f"Details: {e}"
+        )
+    except pd.errors.EmptyDataError:
+        raise pd.errors.EmptyDataError(
+            "Data file is empty. Re-download with: bash runall.sh"
+        )
     return df
 
 
@@ -67,23 +95,41 @@ def dataframe_setup_members() -> pd.DataFrame:
                       - num_of_species
                       - protein_id
                       - species_taxid_containing_protein
-    """
-    column_names = [
-        "evolutionary_level",
-        "orthologous_group_id",
-        "num_of_proteins",
-        "num_of_species",
-        "protein_id",
-        "species_taxid_containing_protein",
-    ]
-    df = pd.read_csv(
-        "data/33208_members.tsv",
-        sep="\t",
-        header=None,
-        names=column_names,
-        # index_col="orthologous_group_id",
-    )
 
+    Raises:
+        FileNotFoundError: If the members file is not found in the data directory.
+        pd.errors.ParserError: If the file is corrupted or malformed.
+        pd.errors.EmptyDataError: If the file is empty.
+    """
+    try:
+        column_names = [
+            "evolutionary_level",
+            "orthologous_group_id",
+            "num_of_proteins",
+            "num_of_species",
+            "protein_id",
+            "species_taxid_containing_protein",
+        ]
+        df = pd.read_csv(
+            "data/33208_members.tsv",
+            sep="\t",
+            header=None,
+            names=column_names,
+            # index_col="orthologous_group_id",
+        )
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            "File '33208_members.tsv' not found. Run: bash runall.sh to download files."
+        )
+    except pd.errors.ParserError as e:
+        raise pd.errors.ParserError(
+            f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
+            f"Details: {e}"
+        )
+    except pd.errors.EmptyDataError:
+        raise pd.errors.EmptyDataError(
+            "Data file is empty. Re-download with: bash runall.sh"
+        )
     return df
 
 
@@ -98,15 +144,36 @@ def dataframe_setup_taxid_info() -> pd.DataFrame:
                       - rank
                       - named_lineage
                       - tax_id_lineage
+
+    Raises:
+        FileNotFoundError: If the taxid info file is not found in the data directory.
+        pd.errors.ParserError: If the file is corrupted or malformed.
+        pd.errors.EmptyDataError: If the file is empty.
     """
-    column_names = [
-        "species_taxid",
-        "species_name",
-        "rank",
-        "named_lineage",
-        "tax_id_lineage",
-    ]
-    df = pd.read_csv("data/e5.taxid_info.tsv", sep="\t", header=0, names=column_names)
+    try:
+        column_names = [
+            "species_taxid",
+            "species_name",
+            "rank",
+            "named_lineage",
+            "tax_id_lineage",
+        ]
+        df = pd.read_csv(
+            "data/e5.taxid_info.tsv", sep="\t", header=0, names=column_names
+        )
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            "File 'e5.taxid_info.tsv' not found. Run: bash runall.sh to download files."
+        )
+    except pd.errors.ParserError as e:
+        raise pd.errors.ParserError(
+            f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
+            f"Details: {e}"
+        )
+    except pd.errors.EmptyDataError:
+        raise pd.errors.EmptyDataError(
+            "Data file is empty. Re-download with: bash runall.sh"
+        )
     return df
 
 
@@ -118,23 +185,42 @@ def dataframe_setup_functional_categories() -> pd.DataFrame:
         pd.DataFrame: A DataFrame containing functional categories with columns:
                       - Category_code
                       - Description
+
+    Raises:
+        FileNotFoundError: If the functional categories file is not found in the data directory.
+        pd.errors.ParserError: If the file is corrupted or malformed.
+        pd.errors.EmptyDataError: If the file is empty.
     """
-    data = []
+    try:
+        data = []
 
-    with open("data/eggnog4.functional_categories.txt", "r") as f:
-        for line in f:
-            line = line.strip()
+        with open("data/eggnog4.functional_categories.txt", "r") as f:
+            for line in f:
+                line = line.strip()
 
-            # Use regex to find lines starting with [Letter]
-            # matches: [J] Description
-            match = re.search(r"\[([A-Z])\]\s*(.*)", line)
+                # Use regex to find lines starting with [Letter]
+                # matches: [J] Description
+                match = re.search(r"\[([A-Z])\]\s*(.*)", line)
 
-            if match:
-                letter = match.group(1)
-                description = match.group(2)
-                data.append([letter, description])
+                if match:
+                    letter = match.group(1)
+                    description = match.group(2)
+                    data.append([letter, description])
 
-    df = pd.DataFrame(data, columns=["category_code", "description"])
+        df = pd.DataFrame(data, columns=["category_code", "description"])
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            "File 'eggnog4.functional_categories.txt' not found. Run: bash runall.sh to download files."
+        )
+    except pd.errors.ParserError as e:
+        raise pd.errors.ParserError(
+            f"File is corrupted or malformed. Re-download with: bash runall.sh\n"
+            f"Details: {e}"
+        )
+    except pd.errors.EmptyDataError:
+        raise pd.errors.EmptyDataError(
+            "Data file is empty. Re-download with: bash runall.sh"
+        )
     return df
 
 
@@ -150,6 +236,9 @@ def get_species_id_by_name(species_name: str, df: pd.DataFrame) -> int:
     Returns:
         int: The species taxid.
 
+    Raises:
+        ValueError: If the species name is not found or has duplicate entries.
+
     Examples:
         >>> import pandas as pd
         >>> data = {'species_name': ['E. coli', 'H. sapiens'], 'species_taxid': [562, 9606]}
@@ -157,7 +246,13 @@ def get_species_id_by_name(species_name: str, df: pd.DataFrame) -> int:
         >>> get_species_id_by_name('E. coli', df)
         562
     """
-    return df.loc[df["species_name"] == species_name, "species_taxid"].item()
+    try:
+        species_id = df.loc[df["species_name"] == species_name, "species_taxid"].item()
+    except ValueError:
+        raise ValueError(
+            f"Species '{species_name}' not found or has duplicate entries in dataframe."
+        )
+    return species_id
 
 
 def get_species_name_by_id(species_id: int, df: pd.DataFrame) -> str:
@@ -171,6 +266,9 @@ def get_species_name_by_id(species_id: int, df: pd.DataFrame) -> str:
     Returns:
         str: The name of the species.
 
+    Raises:
+        ValueError: If the species ID is not found or has duplicate entries.
+
     Examples:
         >>> import pandas as pd
         >>> data = {'species_name': ['E. coli', 'H. sapiens'], 'species_taxid': [562, 9606]}
@@ -178,7 +276,13 @@ def get_species_name_by_id(species_id: int, df: pd.DataFrame) -> str:
         >>> get_species_name_by_id(9606, df)
         'H. sapiens'
     """
-    return df.loc[df["species_taxid"] == species_id, "species_name"].item()
+    try:
+        species_name = df.loc[df["species_taxid"] == species_id, "species_name"].item()
+    except ValueError:
+        raise ValueError(
+            f"Species with ID '{species_id}' not found or has duplicate entries in dataframe."
+        )
+    return species_name
 
 
 def get_species_ids_from_names(species_names, df_species: pd.DataFrame) -> List[int]:
@@ -221,6 +325,9 @@ def filter_by_ids(
     Returns:
         pd.DataFrame: The filtered dataframe.
 
+    Raises:
+        KeyError: If the specified column is not found in the dataframe.
+
     Examples:
         >>> import pandas as pd
         >>> data = {'id': [1, 2, 3], 'tags': ['A,B', 'B,C', 'A,C']}
@@ -238,67 +345,27 @@ def filter_by_ids(
     if exclude_ids is None:
         exclude_ids = []
 
-    # Start with a mask where everything is True
-    mask = pd.Series(True, index=df.index)
+    try:
+        # Start with a mask where everything is True
+        mask = pd.Series(True, index=df.index)
 
-    # 1. Must include ALL of these
-    for inc_id in include_ids:
-        # \b ensures we match "1" but not "11"
-        regex_pattern = rf"\b{inc_id}\b"
-        mask &= df[column].str.contains(regex_pattern, na=False)
+        # 1. Must include ALL of these
+        for inc_id in include_ids:
+            # \b ensures we match "1" but not "11"
+            regex_pattern = rf"\b{inc_id}\b"
+            mask &= df[column].str.contains(regex_pattern, na=False)
 
-    # 2. Must include NONE of these
-    for exc_id in exclude_ids:
-        regex_pattern = rf"\b{exc_id}\b"
-        mask &= ~df[column].str.contains(regex_pattern, na=False)
+        # 2. Must include NONE of these
+        for exc_id in exclude_ids:
+            regex_pattern = rf"\b{exc_id}\b"
+            mask &= ~df[column].str.contains(regex_pattern, na=False)
+    except KeyError:
+        raise KeyError(
+            f"Column '{column}' not found in dataframe. "
+            f"Available columns: {list(df.columns)}"
+        )
 
     return df[mask]
-
-
-# anpassen um pandas zu nutzen?
-
-
-def extract_protein_id(file_path: str) -> set:
-    """
-    Extract unique protein IDs from a tab-separated values (TSV) file.
-    Reads a TSV file, skips the header row, and extracts protein IDs from the
-    4th column (index 3). Handles comma-separated protein IDs within each cell.
-    Args:
-        file_path (str): The path to the TSV file to read.
-    Returns:
-        set: A set of unique protein IDs found in the file.
-    Example:
-        >>> protein_ids = extract_protein_id("data.tsv")
-        >>> print(protein_ids)
-        {'PROT001', 'PROT002', 'PROT003'}
-    """
-
-    unique_protein_ids = set()
-    with open(file_path, "r") as f:
-        rd = csv.reader(f, delimiter="\t")
-        next(rd)  # Skip header row
-        for line in rd:
-            protein_ids = line[3].split(",")
-            for protein_id in protein_ids:
-                unique_protein_ids.add(protein_id)
-    return unique_protein_ids
-
-
-def write_protein_id(file_path: str, output_path: str) -> None:
-    """
-    Write unique protein IDs to a file, one per line.
-
-    Args:
-        output_path (str): The file path where protein IDs will be written.
-
-    Returns:
-        None
-    """
-
-    with open(output_path, "w") as file:
-        unique = extract_protein_id(file_path)
-        for id in unique:
-            file.write(f"{id}\n")
 
 
 def filter_by_species_names(
@@ -320,6 +387,10 @@ def filter_by_species_names(
     Returns:
         pd.DataFrame: Filtered dataframe
 
+    Raises:
+        ValueError: If any species name in the iterable is not found in the species dataframe.
+        KeyError: If the specified column is not found in the dataframe.
+
     Examples:
         >>> import pandas as pd
         >>> df = pd.DataFrame({'ids': ['562,9606', '9606', '562']})
@@ -333,7 +404,11 @@ def filter_by_species_names(
         1  9606
         2  562
     """
-    species_ids = get_species_ids_from_names(species_names, df_species)
+
+    try:
+        species_ids = get_species_ids_from_names(species_names, df_species)
+    except ValueError as e:
+        raise ValueError(f"Failed to resolve species names to IDs: {e}")
     return filter_allowed_ids(df, column, species_ids)
 
 
@@ -354,6 +429,8 @@ def filter_allowed_ids(
     Returns:
         pd.DataFrame: A filtered DataFrame containing only rows where all IDs in the specified column
                       are present in the allowed_ids set. The original DataFrame is not modified.
+    Raises:
+        KeyError: If the specified column is not found in the dataframe.
     Example:
         >>> df = pd.DataFrame({'ids': ['1,2,3', '4,5', '2,3']})
         >>> allowed = ['1', '2', '3', '4', '5']
@@ -363,15 +440,100 @@ def filter_allowed_ids(
         1  4,5
         2  2,3
     """
-    allowed_set = set(str(id) for id in allowed_ids)
+    allowed_set = set(str(item) for item in allowed_ids)
 
-    mask = (
-        df[column]
-        .astype(str)
-        .str.split(r"[,\s]+")
-        .apply(lambda ids: set(ids) <= allowed_set)  # subset or equal
-    )
+    try:
+        mask = (
+            df[column]
+            .astype(str)
+            .str.split(r"[,\s]+")
+            .apply(lambda ids: set(ids) <= allowed_set)
+        )
+    except KeyError:
+        raise KeyError(
+            f"Column '{column}' not found in dataframe. "
+            f"Available columns: {list(df.columns)}"
+        )
+
     return df[mask]
 
 
-# --END FUNCTIONS--
+def clean_taxid_string(raw_string: str) -> Set[int]:
+    """
+    Extract unique taxonomic IDs from a protein ID string.
+
+    Parses a comma-separated string of protein IDs with taxonomic prefixes
+    and returns a set of unique taxonomic IDs.
+
+    Args:
+        raw_string (str): Comma-separated protein IDs with taxid prefixes
+                         (e.g., "9606.ENSP123, 10090.ENSMUSP456")
+
+    Returns:
+        Set[int]: Set of unique taxonomic IDs extracted from the string
+
+    Raises:
+        ValueError: If the string contains non-numeric taxonomic ID prefixes.
+
+    Examples:
+        >>> clean_taxid_string("9606.ENSP123, 10090.ENSMUSP456, 10116.ENSRNOP789")
+        {9606, 10090, 10116}
+        >>> clean_taxid_string("562.ECOLI_001")
+        {562}
+    """
+    s = str(raw_string)
+    items = s.split(",")
+    try:
+        clean_set = {int(item.split(".")[0].strip()) for item in items}
+    except ValueError:
+        raise ValueError(
+            f"Failed to parse taxonomic IDs from string: '{raw_string}'. "
+            f"Expected format: 'TAXID.PROTEINID' (e.g., '9606.ENSP00000123')."
+        )
+    return clean_set
+
+
+def get_og_set(target_taxid: int, df_members: pd.DataFrame) -> Set[str]:
+    """
+    Get all orthologous group IDs containing a specific taxonomic ID.
+
+    Filters the members dataframe to find all orthologous groups that contain
+    the specified taxonomic ID. Requires that the dataframe has a 'clean_taxid_set'
+    column created by applying clean_taxid_string.
+
+    Args:
+        target_taxid (int): The taxonomic ID to search for
+        df_members (pd.DataFrame): Members dataframe with 'clean_taxid_set' column
+                                   and 'orthologous_group_id' column or index
+
+    Returns:
+        Set[str]: Set of orthologous group IDs containing the target taxonomic ID
+
+    Raises:
+        KeyError: If the 'clean_taxid_set' column is missing from the dataframe.
+
+    Examples:
+        >>> import pandas as pd
+        >>> df = pd.DataFrame({
+        ...     'orthologous_group_id': ['OG1', 'OG2', 'OG3'],
+        ...     'clean_taxid_set': [{9606, 10090}, {9606}, {10090, 10116}]
+        ... })
+        >>> get_og_set(9606, df)
+        {'OG1', 'OG2'}
+    """
+    try:
+        mask = df_members["clean_taxid_set"].apply(lambda s: target_taxid in s)
+    except KeyError:
+        raise KeyError(
+            "Column 'clean_taxid_set' not found. Apply clean_taxid_string to the "
+            "'species_taxid_containing_protein' column first."
+        )
+    og_col = (
+        "orthologous_group_id"
+        if "orthologous_group_id" in df_members.columns
+        else df_members.index.name
+    )
+    if og_col in df_members.columns:
+        return set(df_members.loc[mask, og_col])
+    else:
+        return set(df_members.loc[mask].index)
