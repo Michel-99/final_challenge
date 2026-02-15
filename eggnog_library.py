@@ -215,7 +215,7 @@ def dataframe_setup_functional_categories() -> pd.DataFrame:
         raise IOError(
             f"Error reading file 'eggnog4.functional_categories.txt'. Re-download with: bash runall.sh\n"
             f"Details: {e}"
-        )
+        ) from e
     return df
 
 
