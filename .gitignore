@@ -6,7 +6,6 @@ __pycache__/
 .Python
 
 # Distribution / packaging
-.Python
 build/
 develop-eggs/
 dist/
@@ -38,4 +37,3 @@ env/
 
 # Project specific
 temp/
-*.pyc
